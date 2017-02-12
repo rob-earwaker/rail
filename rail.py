@@ -1,6 +1,10 @@
 import functools
 
 
+def identity(value):
+    return value
+
+
 def raise_exception(exception):
     raise exception
 
