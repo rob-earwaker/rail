@@ -1,3 +1,18 @@
+import functools
+
+
+def guard(exception_type):
+    def guard_function(function):
+        @functools.wraps(function)
+        def guarded_function(*args, **kwargs):
+            try:
+                return Result.success(function(*args, **kwargs))
+            except exception_type as exception:
+                return Result.failure(exception)
+        return guarded_function
+    return guard_function
+
+
 class Result(object):
     def __init__(self, success, failure, is_success):
         self._success = success
