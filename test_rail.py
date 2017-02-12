@@ -4,6 +4,63 @@ import unittest
 import rail
 
 
+class TestRaiseException(unittest.TestCase):
+    def test_raises_exception(self):
+        with self.assertRaisesRegex(ValueError, '^failure$'):
+            rail.raise_exception(ValueError('failure'))
+
+
+class TestGuard(unittest.TestCase):
+    def test_guard_with_no_exception_raised(self):
+        @rail.guard(Exception)
+        def guarded_function():
+            return 'success'
+        guarded_function().fold(
+            lambda success: self.assertEqual('success', success),
+            lambda failure: self.fail()
+        )
+
+    def test_guard_base_exception_with_base_exception_raised(self):
+        @rail.guard(Exception)
+        def guarded_function():
+            raise Exception('failure')
+        exception = guarded_function().fold(
+            lambda success: self.fail(),
+            lambda failure: failure
+        )
+        self.assertIsInstance(exception, Exception)
+        self.assertEqual('failure', str(exception))
+
+    def test_guard_base_exception_with_child_exception_raised(self):
+        @rail.guard(Exception)
+        def guarded_function():
+            raise ValueError('failure')
+        exception = guarded_function().fold(
+            lambda success: self.fail(),
+            lambda failure: failure
+        )
+        self.assertIsInstance(exception, ValueError)
+        self.assertEqual('failure', str(exception))
+
+    def test_guard_custom_exception_with_same_exception_raised(self):
+        @rail.guard(ValueError)
+        def guarded_function():
+            raise ValueError('failure')
+        exception = guarded_function().fold(
+            lambda success: self.fail(),
+            lambda failure: failure
+        )
+        self.assertIsInstance(exception, ValueError)
+        self.assertEqual('failure', str(exception))
+
+    def test_guard_custom_exception_with_different_exception_raised(self):
+        @rail.guard(ValueError)
+        def guarded_function():
+            raise TypeError('failure')
+        with self.assertRaisesRegex(TypeError, '^failure$'):
+            guarded_function()
+
+
 class TestResult(unittest.TestCase):
     def test_fold_with_success_input(self):
         value = rail.Result.success('success').fold(
@@ -218,57 +275,6 @@ class TestResult(unittest.TestCase):
             lambda failure: self.assertEqual('failure', failure)
         )
         tee_failure.assert_called_once_with('failure')
-
-
-class TestGuard(unittest.TestCase):
-    def test_guard_with_no_exception_raised(self):
-        @rail.guard(Exception)
-        def guarded_function():
-            return 'success'
-        guarded_function().fold(
-            lambda success: self.assertEqual('success', success),
-            lambda failure: self.fail()
-        )
-
-    def test_guard_base_exception_with_base_exception_raised(self):
-        @rail.guard(Exception)
-        def guarded_function():
-            raise Exception('failure')
-        exception = guarded_function().fold(
-            lambda success: self.fail(),
-            lambda failure: failure
-        )
-        self.assertIsInstance(exception, Exception)
-        self.assertEqual('failure', str(exception))
-
-    def test_guard_base_exception_with_child_exception_raised(self):
-        @rail.guard(Exception)
-        def guarded_function():
-            raise ValueError('failure')
-        exception = guarded_function().fold(
-            lambda success: self.fail(),
-            lambda failure: failure
-        )
-        self.assertIsInstance(exception, ValueError)
-        self.assertEqual('failure', str(exception))
-
-    def test_guard_custom_exception_with_same_exception_raised(self):
-        @rail.guard(ValueError)
-        def guarded_function():
-            raise ValueError('failure')
-        exception = guarded_function().fold(
-            lambda success: self.fail(),
-            lambda failure: failure
-        )
-        self.assertIsInstance(exception, ValueError)
-        self.assertEqual('failure', str(exception))
-
-    def test_guard_custom_exception_with_different_exception_raised(self):
-        @rail.guard(ValueError)
-        def guarded_function():
-            raise TypeError('failure')
-        with self.assertRaisesRegex(TypeError, '^failure$'):
-            guarded_function()
 
 
 if __name__ == '__main__':

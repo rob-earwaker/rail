@@ -1,6 +1,10 @@
 import functools
 
 
+def raise_exception(exception):
+    raise exception
+
+
 def guard(exception_type):
     def guard_function(function):
         @functools.wraps(function)
