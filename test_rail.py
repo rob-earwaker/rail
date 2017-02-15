@@ -12,8 +12,27 @@ class TestIdentity(unittest.TestCase):
 
 class TestRaiseException(unittest.TestCase):
     def test_raises_exception(self):
-        with self.assertRaisesRegex(ValueError, '^failure$'):
+        with self.assertRaises(ValueError) as context:
             rail.raise_exception(ValueError('failure'))
+        self.assertEqual('failure', str(context.exception))
+
+
+class TestMatch(unittest.TestCase):
+    def test_no_match_statements_provided(self):
+        with self.assertRaises(rail.UnmatchedValueFailure) as context:
+            rail.match(
+                (lambda value: value == 'mock', lambda value: mock())
+            )('value')
+        self.assertEqual('value', context.exception.value)
+
+    def test_value_unmatched_by_all_match_statements(self):
+        with self.assertRaises(rail.UnmatchedValueFailure) as context:
+            rail.match(
+                (lambda value: value == 'mock', lambda value: mock.Mock()),
+                (lambda value: len(value) > 9, lambda value: mock.Mock()),
+                (lambda value: type(value) == float, lambda value: mock.Mock())
+            )('value')
+        self.assertEqual('value', context.exception.value)
 
 
 if __name__ == '__main__':
