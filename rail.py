@@ -9,83 +9,59 @@ def raise_exception(exception):
     raise exception
 
 
-def guard(exception_type):
-    def guard_function(function):
-        @functools.wraps(function)
-        def guarded_function(*args, **kwargs):
-            try:
-                return Result.success(function(*args, **kwargs))
-            except exception_type as exception:
-                return Result.failure(exception)
-        return guarded_function
-    return guard_function
+class Failure(Exception):
+    pass
 
 
-class Result(object):
-    def __init__(self, success, failure, is_success):
-        self._success = success
-        self._failure = failure
-        self._is_success = is_success
+class UnmatchedValueFailure(Failure):
+    def __init__(self, value):
+        self.value = value
+        super().__init__(str(value))
+
+
+def match(*args):
+    def get_map_function(value):
+        for is_match, map_function in args:
+            if is_match(value):
+                return map_function
+        raise UnmatchedValueFailure(value)
+    return lambda failure: get_map_function(failure)(failure)
+
+
+def match_type(*args):
+    return match(**[
+        (lambda value: isinstance(value, match_types), map_function)
+        for match_types, map_function in args
+    ])
+
+
+class Rail(object):
+    def __init__(self, function):
+        self.function = function
+
+    def __call__(self, arg):
+        return self.function(arg)
 
     @classmethod
-    def success(cls, success):
-        return cls(success=success, failure=None, is_success=True)
+    def new(cls):
+        return Rail(identity)
 
-    @classmethod
-    def failure(cls, failure):
-        return cls(success=None, failure=failure, is_success=False)
+    def compose(self, *functions):
+        def compose2(function1, function2):
+            return lambda arg: function2(function1(arg))
+        return Rail(functools.reduce(compose2, functions, self.function))
+
+    def tee(self, *functions):
+        def tee_function(arg):
+            Rail.new().compose(*functions)(arg)
+            return arg
+        return self.compose(tee_function)
 
     def fold(self, fold_success, fold_failure):
-        return (
-            fold_success(self._success) if self._is_success
-            else fold_failure(self._failure)
-        )
-
-    def map_either(self, map_success, map_failure):
-        return self.fold(
-            lambda success: Result.success(map_success(success)),
-            lambda failure: Result.failure(map_failure(failure))
-        )
-
-    def map_success(self, map_success):
-        return self.map_either(
-            lambda success: map_success(success),
-            lambda failure: failure
-        )
-
-    def map_failure(self, map_failure):
-        return self.map_either(
-            lambda success: success,
-            lambda failure: map_failure(failure)
-        )
-
-    def switch_success(self, switch_success):
-        return self.fold(
-            lambda success: switch_success(success),
-            lambda failure: Result.failure(failure)
-        )
-
-    def switch_failure(self, switch_failure):
-        return self.fold(
-            lambda success: Result.success(success),
-            lambda failure: switch_failure(failure)
-        )
-
-    def tee_either(self, tee_success, tee_failure):
-        self.fold(
-            lambda success: tee_success(success),
-            lambda failure: tee_failure(failure)
-        )
-        return self
-
-    def tee_success(self, tee_success):
-        return self.tee_either(
-            lambda success: tee_success(success),
-            lambda failure: None
-        )
-
-    def tee_failure(self, tee_failure):
-        return self.tee_either(
-            lambda success: None,
-            lambda failure: tee_failure(failure)
-        )
+        def fold_function(function, arg):
+            try:
+                return fold_success(function(arg))
+            except Failure as failure:
+                return fold_failure(failure)
+        function = self.function
+        return Rail.new().compose(lambda arg: fold_function(function, arg))
