@@ -90,6 +90,15 @@ class TestMatchType(unittest.TestCase):
         )
         self.assertEqual(expected_result, match(mock.Mock()))
 
+    def test_value_subclass_of_match_type(self):
+        expected_result = mock.Mock()
+        match = rail.match_type(
+            (bool, lambda _: mock.Mock()),
+            (object, lambda _: expected_result),
+            (mock.Mock, lambda _: mock.Mock())
+        )
+        self.assertEqual(expected_result, match(mock.Mock()))
+
 
 if __name__ == '__main__':
     unittest.main()
