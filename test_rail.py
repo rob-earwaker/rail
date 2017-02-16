@@ -19,19 +19,39 @@ class TestRaiseException(unittest.TestCase):
 
 class TestMatch(unittest.TestCase):
     def test_no_match_statements_provided(self):
+        value = mock.Mock()
         with self.assertRaises(rail.UnmatchedValueError) as context:
-            rail.match()('value')
-        self.assertEqual('value', context.exception.value)
+            rail.match()(value)
+        self.assertEqual(value, context.exception.value)
 
     def test_value_unmatched_by_all_match_statements(self):
+        value = mock.Mock()
         with self.assertRaises(rail.UnmatchedValueError) as context:
-            value = mock.Mock()
-            rail.match(
+            match = rail.match(
                 (lambda value: False, lambda value: mock.Mock()),
                 (lambda value: False, lambda value: mock.Mock()),
                 (lambda value: False, lambda value: mock.Mock())
-            )(value)
+            )
+            match(value)
         self.assertEqual(value, context.exception.value)
+
+    def test_value_matches_single_match_statement(self):
+        expected = mock.Mock()
+        match = rail.match(
+            (lambda value: False, lambda value: mock.Mock()),
+            (lambda value: True, lambda value: expected),
+            (lambda value: False, lambda value: mock.Mock())
+        )
+        self.assertEqual(expected, match(mock.Mock()))
+
+    def test_value_matches_multiple_match_statements(self):
+        expected = mock.Mock()
+        match = rail.match(
+            (lambda value: False, lambda value: mock.Mock()),
+            (lambda value: True, lambda value: expected),
+            (lambda value: True, lambda value: mock.Mock())
+        )
+        self.assertEqual(expected, match(mock.Mock()))
 
 
 if __name__ == '__main__':
