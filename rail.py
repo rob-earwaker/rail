@@ -9,11 +9,11 @@ def raise_exception(exception):
     raise exception
 
 
-class Failure(Exception):
+class Error(Exception):
     pass
 
 
-class UnmatchedValueFailure(Failure):
+class UnmatchedValueError(Error):
     def __init__(self, value):
         self.value = value
         super().__init__(str(value))
@@ -24,8 +24,8 @@ def match(*args):
         for is_match, map_function in args:
             if is_match(value):
                 return map_function
-        raise UnmatchedValueFailure(value)
-    return lambda failure: get_map_function(failure)(failure)
+        raise UnmatchedValueError(value)
+    return lambda error: get_map_function(error)(error)
 
 
 def match_type(*args):
@@ -57,11 +57,11 @@ class Rail(object):
             return arg
         return self.compose(tee_function)
 
-    def fold(self, fold_success, fold_failure):
+    def fold(self, fold_value, fold_error):
         def fold_function(function, arg):
             try:
-                return fold_success(function(arg))
-            except Failure as failure:
-                return fold_failure(failure)
+                return fold_value(function(arg))
+            except Error as error:
+                return fold_error(error)
         function = self.function
         return Rail.new().compose(lambda arg: fold_function(function, arg))
