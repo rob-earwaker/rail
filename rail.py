@@ -29,9 +29,9 @@ def match(*args):
 
 
 def match_type(*args):
-    return match(**[
-        (lambda value: isinstance(value, match_types), map_function)
-        for match_types, map_function in args
+    return match(*[
+        (lambda value, types=types: isinstance(value, types), map_function)
+        for types, map_function in args
     ])
 
 
