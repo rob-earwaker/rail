@@ -180,10 +180,9 @@ class TestRail(unittest.TestCase):
     def test_tee_with_multiple_functions(self):
         return_value1 = mock.Mock()
         return_value2 = mock.Mock()
-        return_value3 = mock.Mock()
         function1 = mock.Mock(return_value=return_value1)
         function2 = mock.Mock(return_value=return_value2)
-        function3 = mock.Mock(return_value=return_value3)
+        function3 = mock.Mock()
         function = rail.Rail.new().tee(
             function1,
             function2,
@@ -194,6 +193,19 @@ class TestRail(unittest.TestCase):
         function1.assert_called_once_with(value)
         function2.assert_called_once_with(return_value1)
         function3.assert_called_once_with(return_value2)
+
+    def test_tee_called_consecutively(self):
+        function1 = mock.Mock()
+        function2 = mock.Mock()
+        function = rail.Rail.new().tee(
+            function1
+        ).tee(
+            function2
+        )
+        value = mock.Mock()
+        self.assertEqual(value, function(value))
+        function1.assert_called_once_with(value)
+        function2.assert_called_once_with(value)
 
     def test_fold_with_no_error(self):
         expected_value = mock.Mock()
