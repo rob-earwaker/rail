@@ -58,10 +58,9 @@ class Rail(object):
         return self.compose(tee_function)
 
     def fold(self, fold_value, fold_error):
-        def fold_function(function, arg):
+        def fold_function(arg, function=self.function):
             try:
                 return fold_value(function(arg))
             except Error as error:
                 return fold_error(error)
-        function = self.function
-        return Rail.new().compose(lambda arg: fold_function(function, arg))
+        return Rail.new().compose(fold_function)
