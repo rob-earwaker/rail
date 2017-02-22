@@ -1,0 +1,10 @@
+language: python
+python:
+  - 3.5
+script:
+  - pip install nose coverage coveralls
+  - nosetests --with-doctest --with-coverage --cover-package=rail
+    --cover-erase --cover-html --doctest-extension=md
+    --doctest-options=+ELLIPSIS
+after_success:
+  - coveralls
