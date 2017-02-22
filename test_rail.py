@@ -36,22 +36,22 @@ class TestMatch(unittest.TestCase):
         self.assertEqual(value, context.exception.value)
 
     def test_value_matches_single_match_statement(self):
-        expected_result = mock.Mock()
+        expected_value = mock.Mock()
         match = rail.match(
             (lambda _: False, lambda _: mock.Mock()),
-            (lambda _: True, lambda _: expected_result),
+            (lambda _: True, lambda _: expected_value),
             (lambda _: False, lambda _: mock.Mock())
         )
-        self.assertEqual(expected_result, match(mock.Mock()))
+        self.assertEqual(expected_value, match(mock.Mock()))
 
     def test_value_matches_multiple_match_statements(self):
-        expected_result = mock.Mock()
+        expected_value = mock.Mock()
         match = rail.match(
             (lambda _: False, lambda _: mock.Mock()),
-            (lambda _: True, lambda _: expected_result),
+            (lambda _: True, lambda _: expected_value),
             (lambda _: True, lambda _: mock.Mock())
         )
-        self.assertEqual(expected_result, match(mock.Mock()))
+        self.assertEqual(expected_value, match(mock.Mock()))
 
 
 class TestMatchType(unittest.TestCase):
@@ -73,31 +73,53 @@ class TestMatchType(unittest.TestCase):
         self.assertEqual(value, context.exception.value)
 
     def test_value_matches_single_match_statement(self):
-        expected_result = mock.Mock()
+        expected_value = mock.Mock()
         match = rail.match_type(
             (int, lambda _: mock.Mock()),
-            (mock.Mock, lambda _: expected_result),
+            (mock.Mock, lambda _: expected_value),
             (dict, lambda _: mock.Mock())
         )
-        self.assertEqual(expected_result, match(mock.Mock()))
+        self.assertEqual(expected_value, match(mock.Mock()))
 
     def test_value_matches_multiple_match_statements(self):
-        expected_result = mock.Mock()
+        expected_value = mock.Mock()
         match = rail.match_type(
             (bool, lambda _: mock.Mock()),
-            (mock.Mock, lambda _: expected_result),
+            (mock.Mock, lambda _: expected_value),
             (mock.Mock, lambda _: mock.Mock())
         )
-        self.assertEqual(expected_result, match(mock.Mock()))
+        self.assertEqual(expected_value, match(mock.Mock()))
 
     def test_value_subclass_of_match_type(self):
-        expected_result = mock.Mock()
+        expected_value = mock.Mock()
         match = rail.match_type(
             (bool, lambda _: mock.Mock()),
-            (object, lambda _: expected_result),
+            (object, lambda _: expected_value),
             (mock.Mock, lambda _: mock.Mock())
         )
-        self.assertEqual(expected_result, match(mock.Mock()))
+        self.assertEqual(expected_value, match(mock.Mock()))
+
+
+class TestRail(unittest.TestCase):
+    def test_fold_with_no_error(self):
+        expected_value = mock.Mock()
+        function = rail.Rail.new().compose(
+            lambda value: expected_value
+        ).fold(
+            rail.identity,
+            lambda error: self.fail()
+        )
+        self.assertEqual(expected_value, function(mock.Mock()))
+
+    def test_fold_with_error(self):
+        expected_error = rail.Error()
+        function = rail.Rail.new().compose(
+            lambda value: rail.raise_exception(expected_error)
+        ).fold(
+            lambda value: self.fail(),
+            rail.identity
+        )
+        self.assertEqual(expected_error, function(mock.Mock()))
 
 
 if __name__ == '__main__':
