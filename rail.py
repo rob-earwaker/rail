@@ -1,3 +1,5 @@
+from builtins import super
+
 import functools
 
 
