@@ -105,6 +105,41 @@ class TestMatchType(unittest.TestCase):
         self.assertEqual(expected_value, match(mock.Mock()))
 
 
+class TestCompose(unittest.TestCase):
+    def test_compose_with_no_error(self):
+        expected_value = mock.Mock()
+        function = rail.compose(
+            lambda value: expected_value
+        )
+        self.assertEqual(expected_value, function(mock.Mock()))
+
+    def test_compose_with_error(self):
+        with self.assertRaises(rail.Error) as context:
+            function = rail.compose(
+                lambda value: rail.raise_exception(rail.Error('error'))
+            )
+            function(mock.Mock())
+        self.assertEqual('error', str(context.exception))
+
+    def test_compose_with_multiple_functions(self):
+        return_value1 = mock.Mock()
+        return_value2 = mock.Mock()
+        return_value3 = mock.Mock()
+        function1 = mock.Mock(return_value=return_value1)
+        function2 = mock.Mock(return_value=return_value2)
+        function3 = mock.Mock(return_value=return_value3)
+        function = rail.compose(
+            function1,
+            function2,
+            function3
+        )
+        value = mock.Mock()
+        self.assertEqual(return_value3, function(value))
+        function1.assert_called_once_with(value)
+        function2.assert_called_once_with(return_value1)
+        function3.assert_called_once_with(return_value2)
+
+
 class TestRail(unittest.TestCase):
     def test_new_with_no_function(self):
         value = mock.Mock()

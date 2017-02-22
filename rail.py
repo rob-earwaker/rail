@@ -39,6 +39,10 @@ def match_type(*args):
     ])
 
 
+def compose(*functions):
+    return Rail.new().compose(*functions)
+
+
 class Rail(object):
     def __init__(self, function):
         self.function = function
