@@ -106,6 +106,18 @@ class TestMatchType(unittest.TestCase):
 
 
 class TestRail(unittest.TestCase):
+    def test_new_with_no_function(self):
+        value = mock.Mock()
+        function = rail.Rail.new()
+        self.assertEqual(value, function(value))
+
+    def test_new_with_function(self):
+        expected_value = mock.Mock()
+        function = rail.Rail.new(
+            lambda value: expected_value
+        )
+        self.assertEqual(expected_value, function(mock.Mock()))
+
     def test_compose_with_no_error(self):
         expected_value = mock.Mock()
         function = rail.Rail.new().compose(
