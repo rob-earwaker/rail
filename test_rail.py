@@ -172,9 +172,9 @@ class TestRail(unittest.TestCase):
     def test_fold_with_no_error(self):
         expected_value = mock.Mock()
         function = rail.Rail.new().compose(
-            lambda value: expected_value
+            lambda value: mock.Mock()
         ).fold(
-            rail.identity,
+            lambda value: expected_value,
             lambda error: self.fail()
         )
         self.assertEqual(expected_value, function(mock.Mock()))
