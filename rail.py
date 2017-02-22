@@ -9,6 +9,10 @@ def raise_exception(exception):
     raise exception
 
 
+def ignore(value):
+    pass
+
+
 class Error(Exception):
     pass
 

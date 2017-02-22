@@ -17,6 +17,11 @@ class TestRaiseException(unittest.TestCase):
         self.assertEqual('error', str(context.exception))
 
 
+class TestIgnore(unittest.TestCase):
+    def test_ignores_input_value(self):
+        self.assertIsNone(rail.ignore(mock.Mock()))
+
+
 class TestMatch(unittest.TestCase):
     def test_no_match_statements_provided(self):
         value = mock.Mock()
