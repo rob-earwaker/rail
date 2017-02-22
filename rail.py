@@ -1,5 +1,3 @@
-from builtins import super
-
 import functools
 
 
@@ -22,7 +20,7 @@ class Error(Exception):
 class UnmatchedValueError(Error):
     def __init__(self, value):
         self.value = value
-        super().__init__(str(value))
+        super(Error, self).__init__(str(value))
 
 
 def match(*args):
