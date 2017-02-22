@@ -43,13 +43,13 @@ class Rail(object):
         return self.function(arg)
 
     @classmethod
-    def new(cls):
-        return Rail(identity)
+    def new(cls, function=identity):
+        return Rail(function)
 
     def compose(self, *functions):
         def compose2(function1, function2):
             return lambda arg: function2(function1(arg))
-        return Rail(functools.reduce(compose2, functions, self.function))
+        return Rail.new(functools.reduce(compose2, functions, self.function))
 
     def tee(self, *functions):
         def tee_function(arg):
@@ -63,4 +63,4 @@ class Rail(object):
                 return fold_value(function(arg))
             except Error as error:
                 return fold_error(error)
-        return Rail.new().compose(fold_function)
+        return Rail.new(fold_function)
