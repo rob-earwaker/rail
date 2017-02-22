@@ -105,6 +105,13 @@ class TestMatchType(unittest.TestCase):
         self.assertEqual(expected_value, match(mock.Mock()))
 
 
+class TestNew(unittest.TestCase):
+    def test_new_returns_identity_function(self):
+        function = rail.new()
+        value = mock.Mock()
+        self.assertEqual(value, function(value))
+
+
 class TestCompose(unittest.TestCase):
     def test_compose_with_no_functions(self):
         function = rail.compose()
@@ -146,18 +153,6 @@ class TestCompose(unittest.TestCase):
 
 
 class TestRail(unittest.TestCase):
-    def test_new_with_no_function(self):
-        value = mock.Mock()
-        function = rail.Rail.new()
-        self.assertEqual(value, function(value))
-
-    def test_new_with_function(self):
-        expected_value = mock.Mock()
-        function = rail.Rail.new(
-            lambda value: expected_value
-        )
-        self.assertEqual(expected_value, function(mock.Mock()))
-
     def test_compose_with_existing_function(self):
         return_value1 = mock.Mock()
         return_value2 = mock.Mock()

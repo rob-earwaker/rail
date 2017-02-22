@@ -39,6 +39,10 @@ def match_type(*args):
     ])
 
 
+def new():
+    return Rail.new()
+
+
 def compose(*functions):
     return Rail.new().compose(*functions)
 
