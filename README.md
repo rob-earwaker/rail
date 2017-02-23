@@ -22,24 +22,25 @@ ValueError: -4 is an invalid age!
 >>>
 ```
 
-The `rail` package provides mechanisms for composing functions similar to the one above whilst providing convenient error handling options. As an example, the `validate` function can be composed using the `rail.compose` function:
+The `rail` package provides mechanisms for composing functions similar to the one above into a ROP-style track, and provides convenient error handling options for failure cases. As an example, the `validate` function can be composed using the `rail.compose` function:
 
 ```python
 >>> import rail
->>> rail.compose(validate)
-<rail.Rail object at 0x...>
+>>> composed_validate = rail.compose(validate)
+>>> composed_validate
+<rail.Track object at 0x...>
 >>>
 ```
 
-A `rail.Rail` object is effectively just a wrapper around a function, and can be called directly to execute the function. In this case, we have only composed a single function, so the `rail.Rail` object behaves in exactly the same way as the `validate` function defined earlier:
+A `rail.Track` object is effectively just a wrapper around a function, and can be called directly to execute the function. In this case, we have only composed a single function, so the `rail.Track` object behaves in exactly the same way as the `validate` function defined earlier:
 
 ```python
->>> validate2 = rail.compose(validate)
->>> validate2(7)
+>>> composed_validate(7)
 7
->>> validate(-22)
+>>> composed_validate(-22)
 Traceback (most recent call last):
   ...
 ValueError: -22 is an invalid age!
 >>>
 ```
+

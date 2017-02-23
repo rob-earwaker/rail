@@ -40,14 +40,14 @@ def match_type(*args):
 
 
 def new():
-    return Rail.new()
+    return Track.new()
 
 
 def compose(*functions):
-    return Rail.new().compose(*functions)
+    return Track.new().compose(*functions)
 
 
-class Rail(object):
+class Track(object):
     def __init__(self, function):
         self.function = function
 
@@ -56,16 +56,16 @@ class Rail(object):
 
     @classmethod
     def new(cls, function=identity):
-        return Rail(function)
+        return Track(function)
 
     def compose(self, *functions):
         def compose2(function1, function2):
             return lambda arg: function2(function1(arg))
-        return Rail.new(functools.reduce(compose2, functions, self.function))
+        return Track.new(functools.reduce(compose2, functions, self.function))
 
     def tee(self, *functions):
         def tee_function(arg):
-            Rail.new().compose(*functions)(arg)
+            Track.new().compose(*functions)(arg)
             return arg
         return self.compose(tee_function)
 
@@ -75,4 +75,4 @@ class Rail(object):
                 return fold_value(function(arg))
             except Error as error:
                 return fold_error(error)
-        return Rail.new(fold_function)
+        return Track.new(fold_function)

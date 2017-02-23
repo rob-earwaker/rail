@@ -152,7 +152,7 @@ class TestCompose(unittest.TestCase):
         function3.assert_called_once_with(return_value2)
 
 
-class TestRail(unittest.TestCase):
+class TestTrack(unittest.TestCase):
     def test_compose_with_existing_function(self):
         return_value1 = mock.Mock()
         return_value2 = mock.Mock()
@@ -160,7 +160,7 @@ class TestRail(unittest.TestCase):
         function1 = mock.Mock(return_value=return_value1)
         function2 = mock.Mock(return_value=return_value2)
         function3 = mock.Mock(return_value=return_value3)
-        function = rail.Rail.new(
+        function = rail.Track.new(
             function1
         ).compose(
             function2,
@@ -178,7 +178,7 @@ class TestRail(unittest.TestCase):
         function1 = mock.Mock(return_value=return_value1)
         function2 = mock.Mock(return_value=return_value2)
         function3 = mock.Mock()
-        function = rail.Rail.new().tee(
+        function = rail.Track.new().tee(
             function1,
             function2,
             function3
@@ -192,7 +192,7 @@ class TestRail(unittest.TestCase):
     def test_tee_called_consecutively(self):
         function1 = mock.Mock()
         function2 = mock.Mock()
-        function = rail.Rail.new().tee(
+        function = rail.Track.new().tee(
             function1
         ).tee(
             function2
@@ -204,7 +204,7 @@ class TestRail(unittest.TestCase):
 
     def test_fold_with_no_error(self):
         expected_value = mock.Mock()
-        function = rail.Rail.new().compose(
+        function = rail.Track.new().compose(
             lambda value: mock.Mock()
         ).fold(
             lambda value: expected_value,
@@ -214,7 +214,7 @@ class TestRail(unittest.TestCase):
 
     def test_fold_with_error(self):
         expected_error = rail.Error()
-        function = rail.Rail.new().compose(
+        function = rail.Track.new().compose(
             lambda value: rail.raise_exception(expected_error)
         ).fold(
             lambda value: self.fail(),
