@@ -1,6 +1,4 @@
+*.pyc
 .coverage
 .idea
-
 cover/
-
-*.pyc
