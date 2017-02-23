@@ -1,2 +1,6 @@
+.coverage
 .idea
+
+cover/
+
 *.pyc
