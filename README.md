@@ -79,3 +79,57 @@ To add an error handling function onto a track, use the `rail.Track.fold` method
 '-102 is an invalid age!'
 >>>
 ```
+
+The example above is fairly simplistic. Lets create a slightly more complicated track:
+
+```python
+>>> import datetime
+>>> import re
+>>> 
+>>> import rail
+...
+>>> class DateOfBirthValidationError(rail.Error):
+...     def __init__(self, value, expected_format):
+...         message_format = '{0} is an invalid date of birth - expected format "{1}"'
+...         super(DateOfBirthValidationError, self).__init__(
+...             message_format.format(value, expected_format)
+...         )
+...
+>>> def validate_date_of_birth(value):
+...     pattern = '^(\d{4})-(\d{2})-(\d{2})$'
+...     match = re.search(pattern, value)
+...     if not match:
+...         raise DateOfBirthValidationError(value, expected_format=pattern)
+...     year = int(match.group(1))
+...     month = int(match.group(2))
+...     day = int(match.group(3))
+...     return datetime.date(year, month, day)
+...
+>>> class NegativeAgeError(rail.Error):
+...     def __init__(self, date):
+...         message_format = 'Date of birth is before {0}'
+...         super(NegativeAgeError, self).__init__(
+...             message_format.format(date)
+...         )
+...
+>>> def calculate_age(date, date_of_birth):
+...     age = date - date_of_birth
+...     if age.total_seconds() < 0:
+...         raise NegativeAgeError(date)
+...     return age
+...
+>>> age_on_1st_Jan_2000 = rail.compose(
+...     validate_date_of_birth,
+...     lambda date_of_birth: calculate_age(datetime.date(2000, 1, 1), date_of_birth)
+... ).fold(
+...     lambda value: 'On 1st Jan 2000 your age was {0}'.format(value),
+...     str
+... )
+>>> age_on_1st_Jan_2000('1965-04-06')
+'On 1st Jan 2000 your age was 12688 days, 0:00:00'
+>>> age_on_1st_Jan_2000('1965/01/01')
+'1965/01/01 is an invalid date of birth - expected format "^(\\d{4})-(\\d{2})-(\\d{2})$"'
+>>> age_on_1st_Jan_2000('2010-02-17')
+'Date of birth is before 2000-01-01'
+>>>
+```
