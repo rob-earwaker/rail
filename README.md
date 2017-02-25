@@ -87,7 +87,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 >>> import re
 >>> 
 >>> import rail
-...
+>>>
 >>> class DateOfBirthValidationError(rail.Error):
 ...     def __init__(self, value):
 ...         message = '{0} is an invalid date of birth'.format(value)
