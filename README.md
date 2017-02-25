@@ -117,7 +117,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ...     lambda dob: calculate_age(datetime.date(2000, 1, 1), dob)
 ... ).fold(
 ...     lambda age: 'Age on 1st Jan 2000 was {0}'.format(age),
-...     lambda error: str(error)
+...     lambda error: 'ERROR: {0}'.format(str(error))
 ... ).compose(
 ...     lambda value: '{0}!!!'.format(value)
 ... )
@@ -126,8 +126,8 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 >>> millenium_age('1965/01/01')
 'Age on 1st Jan 2000 was 12783 days, 0:00:00!!!'
 >>> millenium_age('99/04/23')
-'99/04/23 is an invalid date of birth!!!'
+'ERROR: 99/04/23 is an invalid date of birth!!!'
 >>> millenium_age('2010-02-17')
-'Date of birth is before 2000-01-01!!!'
+'ERROR: Date of birth is before 2000-01-01!!!'
 >>>
 ```
