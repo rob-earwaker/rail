@@ -89,17 +89,15 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 >>> import rail
 ...
 >>> class DateOfBirthValidationError(rail.Error):
-...     def __init__(self, value, expected_format):
-...         message_format = '{0} is an invalid date of birth - expected format "{1}"'
-...         super(DateOfBirthValidationError, self).__init__(
-...             message_format.format(value, expected_format)
-...         )
+...     def __init__(self, value):
+...         message = '{0} is an invalid date of birth'.format(value)
+...         super(DateOfBirthValidationError, self).__init__(message)
 ...
 >>> def validate_date_of_birth(value):
-...     pattern = '^(\d{4})-(\d{2})-(\d{2})$'
+...     pattern = r'^(\d{4}).(\d{2}).(\d{2})$'
 ...     match = re.search(pattern, value)
 ...     if not match:
-...         raise DateOfBirthValidationError(value, expected_format=pattern)
+...         raise DateOfBirthValidationError(value)
 ...     year = int(match.group(1))
 ...     month = int(match.group(2))
 ...     day = int(match.group(3))
@@ -107,10 +105,8 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ...
 >>> class NegativeAgeError(rail.Error):
 ...     def __init__(self, date):
-...         message_format = 'Date of birth is before {0}'
-...         super(NegativeAgeError, self).__init__(
-...             message_format.format(date)
-...         )
+...         message = 'Date of birth is before {0}'.format(date)
+...         super(NegativeAgeError, self).__init__(message)
 ...
 >>> def calculate_age(date, date_of_birth):
 ...     age = date - date_of_birth
@@ -118,18 +114,22 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ...         raise NegativeAgeError(date)
 ...     return age
 ...
->>> age_on_1st_Jan_2000 = rail.compose(
+>>> millenium_age = rail.compose(
 ...     validate_date_of_birth,
 ...     lambda date_of_birth: calculate_age(datetime.date(2000, 1, 1), date_of_birth)
 ... ).fold(
-...     lambda value: 'On 1st Jan 2000 your age was {0}'.format(value),
+...     lambda value: 'Age on 1st Jan 2000 was {0}'.format(value),
 ...     str
+... ).compose(
+...     lambda value: '{0}!!!'.format(value)
 ... )
->>> age_on_1st_Jan_2000('1965-04-06')
-'On 1st Jan 2000 your age was 12688 days, 0:00:00'
->>> age_on_1st_Jan_2000('1965/01/01')
-'1965/01/01 is an invalid date of birth - expected format "^(\\d{4})-(\\d{2})-(\\d{2})$"'
->>> age_on_1st_Jan_2000('2010-02-17')
-'Date of birth is before 2000-01-01'
+>>> millenium_age('1965-04-06')
+'Age on 1st Jan 2000 was 12688 days, 0:00:00!!!'
+>>> millenium_age('1965/01/01')
+'Age on 1st Jan 2000 was 12783 days, 0:00:00!!!'
+>>> millenium_age('99/04/23')
+'99/04/23 is an invalid date of birth!!!'
+>>> millenium_age('2010-02-17')
+'Date of birth is before 2000-01-01!!!'
 >>>
 ```
