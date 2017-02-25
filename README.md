@@ -117,7 +117,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ...     lambda dob: calculate_age(datetime.date(2000, 1, 1), dob)
 ... ).fold(
 ...     lambda age: 'Age on 1st Jan 2000 was {0}'.format(age),
-...     lambda error: 'ERROR: {0}'.format(str(error))
+...     lambda error: 'ERROR: {0}'.format(error)
 ... ).compose(
 ...     lambda value: '{0}!!!'.format(value)
 ... )
