@@ -115,11 +115,11 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ...     return age
 ...
 >>> millenium_age = rail.compose(
-...     validate_date_of_birth,
-...     lambda date_of_birth: calculate_age(datetime.date(2000, 1, 1), date_of_birth)
+...     lambda dob: validate_date_of_birth(dob),
+...     lambda dob: calculate_age(datetime.date(2000, 1, 1), dob)
 ... ).fold(
 ...     lambda value: 'Age on 1st Jan 2000 was {0}'.format(value),
-...     str
+...     lambda error: str(error)
 ... ).compose(
 ...     lambda value: '{0}!!!'.format(value)
 ... )
