@@ -85,9 +85,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ```python
 >>> import datetime
 >>> import re
->>> 
 >>> import rail
->>>
 >>> class DateOfBirthParsingError(rail.Error):
 ...     def __init__(self, value):
 ...         message = '{0} is an invalid date of birth'.format(value)
