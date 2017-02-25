@@ -88,16 +88,16 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 >>> 
 >>> import rail
 >>>
->>> class DateOfBirthValidationError(rail.Error):
+>>> class DateOfBirthParsingError(rail.Error):
 ...     def __init__(self, value):
 ...         message = '{0} is an invalid date of birth'.format(value)
-...         super(DateOfBirthValidationError, self).__init__(message)
+...         super(DateOfBirthParsingError, self).__init__(message)
 ...
->>> def validate_date_of_birth(value):
+>>> def parse_date_of_birth(value):
 ...     pattern = r'^(\d{4}).(\d{2}).(\d{2})$'
 ...     match = re.search(pattern, value)
 ...     if not match:
-...         raise DateOfBirthValidationError(value)
+...         raise DateOfBirthParsingError(value)
 ...     year = int(match.group(1))
 ...     month = int(match.group(2))
 ...     day = int(match.group(3))
@@ -115,10 +115,10 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ...     return age
 ...
 >>> millenium_age = rail.compose(
-...     lambda dob: validate_date_of_birth(dob),
+...     lambda value: parse_date_of_birth(value),
 ...     lambda dob: calculate_age(datetime.date(2000, 1, 1), dob)
 ... ).fold(
-...     lambda value: 'Age on 1st Jan 2000 was {0}'.format(value),
+...     lambda age: 'Age on 1st Jan 2000 was {0}'.format(age),
 ...     lambda error: str(error)
 ... ).compose(
 ...     lambda value: '{0}!!!'.format(value)
