@@ -1,3 +1,4 @@
+import copy
 import functools
 import inspect
 
@@ -40,26 +41,59 @@ def match_type(*args):
     ])
 
 
+class Arguments(object):
+    NONE = object()
+
+    def __init__(self, args):
+        self.args = args
+
+    @classmethod
+    def from_arg_names(cls, arg_names):
+        return cls(args=[(name, cls.NONE) for name in arg_names])
+
+    def add_arg(self, arg):
+        index, name = next(
+            (i, n) for i, (n, a) in enumerate(self.args) if a == self.NONE
+        )
+        self.args[index] = (name, arg)
+
+    def add_named_arg(self, name, arg):
+        index = next(
+            i for i, (n, _) in enumerate(self.args) if n == name
+        )
+        self.args[index] = (name, arg)
+
+    def add_args(self, *args, **kwargs):
+        arguments = Arguments(copy.copy(self.args))
+        for arg in args:
+            arguments.add_arg(arg)
+        for name, arg in kwargs.items():
+            arguments.add_named_arg(name, arg)
+        return arguments
+
+    def all_present(self):
+        return all(arg != self.NONE for _, arg in self.args)
+
+    def values(self):
+        return [arg for _, arg in self.args]
+
+
 class Partial(object):
-    def __init__(self, function, arg_count, args):
+    def __init__(self, function, args):
         self.function = function
-        self.arg_count = arg_count
         self.args = args
 
     @classmethod
     def from_function(cls, function):
         argspec = inspect.getargspec(function)
-        return cls(function, arg_count=len(argspec.args), args=())
+        return cls(function, Arguments.from_arg_names(argspec.args))
 
-    def __call__(self, *args):
-        curry = self.add_args(*args)
-        return curry if len(curry.args) < curry.arg_count else curry.execute()
-
-    def add_args(self, *args):
-        return Partial(self.function, self.arg_count, self.args + args)
+    def __call__(self, *args, **kwargs):
+        partial = Partial(self.function, self.args.add_args(*args, **kwargs))
+        return partial.execute() if partial.args.all_present() else partial
 
     def execute(self):
-        return self.function(*self.args)
+        return self.function(*self.args.values())
 
 
 def partial(function):

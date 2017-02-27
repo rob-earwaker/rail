@@ -125,6 +125,23 @@ class TestPartial(unittest.TestCase):
         self.assertEqual((val1, val2, val3), function(val1, val2)(val3))
         self.assertEqual((val1, val2, val3), function(val1)(val2)(val3))
 
+    def test_arguments_applied_out_of_order(self):
+        @rail.partial
+        def function(arg1, arg2, arg3):
+            return (arg1, arg2, arg3)
+        val1 = mock.Mock()
+        val2 = mock.Mock()
+        val3 = mock.Mock()
+        self.assertEqual((val1, val2, val3), function(arg2=val2)(val1, val3))
+        self.assertEqual((val1, val2, val3), function(arg3=val3)(val1, val2))
+        self.assertEqual(
+            (val1, val2, val3), function(arg2=val2, arg3=val3)(val1)
+        )
+        self.assertEqual(
+            (val1, val2, val3), function(arg3=val3)(arg2=val2)(val1)
+        )
+        self.assertEqual((val1, val2, val3), function(val1, arg3=val3)(val2))
+
 
 class TestNew(unittest.TestCase):
     def test_new_returns_identity_function(self):
