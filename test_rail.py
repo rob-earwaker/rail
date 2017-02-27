@@ -105,16 +105,16 @@ class TestMatchType(unittest.TestCase):
         self.assertEqual(expected_value, match(mock.Mock()))
 
 
-class TestCurried(unittest.TestCase):
+class TestPartial(unittest.TestCase):
     def test_function_with_single_arg(self):
-        @rail.curried
+        @rail.partial
         def function(arg):
             return arg
         value = mock.Mock()
         self.assertEqual(value, function(value))
 
     def test_function_with_multiple_args(self):
-        @rail.curried
+        @rail.partial
         def function(arg1, arg2, arg3):
             return (arg1, arg2, arg3)
         val1 = mock.Mock()

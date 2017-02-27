@@ -40,7 +40,7 @@ def match_type(*args):
     ])
 
 
-class CurriedFunction(object):
+class Partial(object):
     def __init__(self, function, arg_count, args):
         self.function = function
         self.arg_count = arg_count
@@ -57,14 +57,14 @@ class CurriedFunction(object):
         return curry if len(curry.args) < curry.arg_count else curry.execute()
 
     def add_args(self, *args):
-        return CurriedFunction(self.function, self.arg_count, self.args + args)
+        return Partial(self.function, self.arg_count, self.args + args)
 
     def execute(self):
         return self.function(*self.args)
 
 
-def curried(function):
-    return CurriedFunction.from_function(function)
+def partial(function):
+    return Partial.from_function(function)
 
 
 def new():
