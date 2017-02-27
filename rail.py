@@ -49,7 +49,6 @@ class Partial(object):
     @classmethod
     def from_function(cls, function):
         argspec = inspect.getargspec(function)
-        print(argspec.args)
         return cls(function, arg_count=len(argspec.args), args=())
 
     def __call__(self, *args):
