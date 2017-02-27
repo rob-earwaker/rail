@@ -1,4 +1,5 @@
 import functools
+import inspect
 
 
 def identity(value):
@@ -37,6 +38,33 @@ def match_type(*args):
         (lambda value, types=types: isinstance(value, types), map_function)
         for types, map_function in args
     ])
+
+
+class CurriedFunction(object):
+    def __init__(self, function, arg_count, args):
+        self.function = function
+        self.arg_count = arg_count
+        self.args = args
+
+    @classmethod
+    def from_function(cls, function):
+        argspec = inspect.getargspec(function)
+        print(argspec.args)
+        return cls(function, arg_count=len(argspec.args), args=())
+
+    def __call__(self, *args):
+        curry = self.add_args(*args)
+        return curry if len(curry.args) < curry.arg_count else curry.execute()
+
+    def add_args(self, *args):
+        return CurriedFunction(self.function, self.arg_count, self.args + args)
+
+    def execute(self):
+        return self.function(*self.args)
+
+
+def curried(function):
+    return CurriedFunction.from_function(function)
 
 
 def new():

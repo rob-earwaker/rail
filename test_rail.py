@@ -105,6 +105,27 @@ class TestMatchType(unittest.TestCase):
         self.assertEqual(expected_value, match(mock.Mock()))
 
 
+class TestCurried(unittest.TestCase):
+    def test_function_with_single_arg(self):
+        @rail.curried
+        def function(arg):
+            return arg
+        value = mock.Mock()
+        self.assertEqual(value, function(value))
+
+    def test_function_with_multiple_args(self):
+        @rail.curried
+        def function(arg1, arg2, arg3):
+            return (arg1, arg2, arg3)
+        val1 = mock.Mock()
+        val2 = mock.Mock()
+        val3 = mock.Mock()
+        self.assertEqual((val1, val2, val3), function(val1, val2, val3))
+        self.assertEqual((val1, val2, val3), function(val1)(val2, val3))
+        self.assertEqual((val1, val2, val3), function(val1, val2)(val3))
+        self.assertEqual((val1, val2, val3), function(val1)(val2)(val3))
+
+
 class TestNew(unittest.TestCase):
     def test_new_returns_identity_function(self):
         function = rail.new()
