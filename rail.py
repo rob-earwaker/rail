@@ -84,24 +84,30 @@ class Args(object):
         )
 
     def apply_arg(self, value):
-        arg_index = next(
+        update_index = next(
             index for index, arg in enumerate(self.args) if not arg.has_value()
         )
-        self.args[arg_index] = self.args[arg_index].with_value(value)
+        return Args([
+            arg if index != update_index else arg.with_value(value)
+            for index, arg in enumerate(self.args)
+        ])
 
     def apply_named_arg(self, name, value):
-        arg_index = next(
+        update_index = next(
             index for index, arg in enumerate(self.args) if arg.name == name
         )
-        self.args[arg_index] = self.args[arg_index].with_value(value)
+        return Args([
+            arg if index != update_index else arg.with_value(value)
+            for index, arg in enumerate(self.args)
+        ])
 
     def apply_args(self, *args, **kwargs):
-        arguments = Args(copy.copy(self.args))
+        result_args = self
         for arg in args:
-            arguments.apply_arg(arg)
+            result_args = result_args.apply_arg(arg)
         for name, arg in kwargs.items():
-            arguments.apply_named_arg(name, arg)
-        return arguments
+            result_args = result_args.apply_named_arg(name, arg)
+        return result_args
 
     def all_present(self):
         return all(arg.has_value_or_default() for arg in self.args)
