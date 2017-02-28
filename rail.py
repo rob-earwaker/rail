@@ -41,41 +41,73 @@ def match_type(*args):
     ])
 
 
-class Arguments(object):
-    NONE = object()
+class Arg(object):
+    NO_VALUE = object()
+    NO_DEFAULT = object()
 
+    def __init__(self, name, default, value):
+        self.name = name
+        self.default = default
+        self.value = value
+
+    @classmethod
+    def from_name(cls, name, default=NO_DEFAULT):
+        return cls(name, default, value=Arg.NO_VALUE)
+
+    def has_value(self):
+        return self.value != Arg.NO_VALUE
+
+    def has_value_or_default(self):
+        return self.has_value() or self.default != Arg.NO_DEFAULT
+
+    def value_or_default(self):
+        return self.value if self.has_value() else self.default
+
+    def with_value(self, value):
+        return Arg(self.name, self.default, value)
+
+
+class Args(object):
     def __init__(self, args):
         self.args = args
 
     @classmethod
-    def from_arg_names(cls, arg_names):
-        return cls(args=[(name, cls.NONE) for name in arg_names])
-
-    def add_arg(self, arg):
-        index, name = next(
-            (i, n) for i, (n, a) in enumerate(self.args) if a == self.NONE
+    def from_argspec(cls, argspec):
+        defaults = argspec.defaults if argspec.defaults is not None else ()
+        non_default_arg_count = len(argspec.args) - len(defaults)
+        arg_defaults = (Arg.NO_DEFAULT,) * non_default_arg_count + defaults
+        return cls(
+            args=[
+                Arg.from_name(name, default)
+                for name, default in zip(argspec.args, arg_defaults)
+            ]
         )
-        self.args[index] = (name, arg)
 
-    def add_named_arg(self, name, arg):
-        index = next(
-            i for i, (n, _) in enumerate(self.args) if n == name
+    def apply_arg(self, value):
+        arg_index = next(
+            index for index, arg in enumerate(self.args) if not arg.has_value()
         )
-        self.args[index] = (name, arg)
+        self.args[arg_index] = self.args[arg_index].with_value(value)
 
-    def add_args(self, *args, **kwargs):
-        arguments = Arguments(copy.copy(self.args))
+    def apply_named_arg(self, name, value):
+        arg_index = next(
+            index for index, arg in enumerate(self.args) if arg.name == name
+        )
+        self.args[arg_index] = self.args[arg_index].with_value(value)
+
+    def apply_args(self, *args, **kwargs):
+        arguments = Args(copy.copy(self.args))
         for arg in args:
-            arguments.add_arg(arg)
+            arguments.apply_arg(arg)
         for name, arg in kwargs.items():
-            arguments.add_named_arg(name, arg)
+            arguments.apply_named_arg(name, arg)
         return arguments
 
     def all_present(self):
-        return all(arg != self.NONE for _, arg in self.args)
+        return all(arg.has_value_or_default() for arg in self.args)
 
     def values(self):
-        return [arg for _, arg in self.args]
+        return [arg.value_or_default() for arg in self.args]
 
 
 class Partial(object):
@@ -86,10 +118,10 @@ class Partial(object):
     @classmethod
     def from_function(cls, function):
         argspec = inspect.getargspec(function)
-        return cls(function, Arguments.from_arg_names(argspec.args))
+        return cls(function, Args.from_argspec(argspec))
 
     def __call__(self, *args, **kwargs):
-        partial = Partial(self.function, self.args.add_args(*args, **kwargs))
+        partial = Partial(self.function, self.args.apply_args(*args, **kwargs))
         return partial.execute() if partial.args.all_present() else partial
 
     def execute(self):
