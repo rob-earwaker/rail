@@ -68,10 +68,10 @@ class PositionalArg(object):
 
 
 class Args(object):
-    def __init__(self, positional_args, args, kwargs):
-        self.positional_args = positional_args
-        self.args = args
-        self.kwargs = kwargs
+    def __init__(self, named_args, list_args, keyword_args):
+        self.named_args = named_args
+        self.list_args = list_args
+        self.keyword_args = keyword_args
 
     @classmethod
     def from_argspec(cls, argspec):
@@ -81,51 +81,51 @@ class Args(object):
             (PositionalArg.NO_DEFAULT,) * non_default_arg_count + defaults
         )
         return cls(
-            positional_args=[
+            named_args=[
                 PositionalArg.from_name(name, default)
                 for name, default in zip(argspec.args, arg_defaults)
             ],
-            args=(),
-            kwargs={}
+            list_args=(),
+            keyword_args={}
         )
 
     def apply_args(self, *args, **kwargs):
-        new_positional_args = copy.copy(self.positional_args)
-        new_args = copy.copy(self.args)
-        new_kwargs = copy.copy(self.kwargs)
+        named_args = copy.copy(self.named_args)
+        list_args = copy.copy(self.list_args)
+        keyword_args = copy.copy(self.keyword_args)
         for value in args:
             update_index = next(
                 (
-                    index for index, arg in enumerate(new_positional_args)
+                    index for index, arg in enumerate(named_args)
                     if not arg.has_value()
                 ),
                 None
             )
             if update_index is not None:
-                arg = new_positional_args[update_index]
-                new_positional_args[update_index] = arg.with_value(value)
+                arg = named_args[update_index]
+                named_args[update_index] = arg.with_value(value)
             else:
-                new_args += (value,)
+                list_args += (value,)
         for name, value in kwargs.items():
             update_index = next(
                 (
-                    index for index, arg in enumerate(new_positional_args)
+                    index for index, arg in enumerate(named_args)
                     if arg.name == name
                 ),
                 None
             )
             if update_index is not None:
-                arg = new_positional_args[update_index]
-                new_positional_args[update_index] = arg.with_value(value)
+                arg = named_args[update_index]
+                named_args[update_index] = arg.with_value(value)
             else:
-                new_kwargs[name] = value
-        return Args(new_positional_args, new_args, new_kwargs)
+                keyword_args[name] = value
+        return Args(named_args, list_args, keyword_args)
 
     def all_present(self):
-        return all(arg.has_value_or_default() for arg in self.positional_args)
+        return all(arg.has_value_or_default() for arg in self.named_args)
 
-    def positional_arg_values(self):
-        return tuple(arg.value_or_default() for arg in self.positional_args)
+    def named_arg_values(self):
+        return tuple(arg.value_or_default() for arg in self.named_args)
 
 
 class Partial(object):
@@ -144,8 +144,8 @@ class Partial(object):
 
     def execute(self):
         return self.function(
-            *(self.args.positional_arg_values() + self.args.args),
-            **self.args.kwargs
+            *(self.args.named_arg_values() + self.args.list_args),
+            **self.args.keyword_args
         )
 
 
