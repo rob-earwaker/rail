@@ -106,6 +106,12 @@ class TestMatchType(unittest.TestCase):
 
 
 class TestPartial(unittest.TestCase):
+    def test_function_with_no_args(self):
+        @rail.partial
+        def function():
+            return 'value'
+        self.assertEqual('value', function())
+
     def test_function_with_single_arg(self):
         @rail.partial
         def function(arg):
@@ -125,7 +131,7 @@ class TestPartial(unittest.TestCase):
         self.assertEqual((val1, val2, val3), function(val1, val2)(val3))
         self.assertEqual((val1, val2, val3), function(val1)(val2)(val3))
 
-    def test_arguments_applied_out_of_order(self):
+    def test_function_with_arguments_applied_out_of_order(self):
         @rail.partial
         def function(arg1, arg2, arg3):
             return arg1, arg2, arg3
@@ -142,20 +148,38 @@ class TestPartial(unittest.TestCase):
         )
         self.assertEqual((val1, val2, val3), function(val1, arg3=val3)(val2))
 
-    def test_argument_with_default_value(self):
+    def test_function_with_default_arguments(self):
         @rail.partial
-        def function(arg1, arg2, arg3='val3'):
-            return arg1, arg2, arg3
+        def function(arg1, arg2, arg3='val3', arg4='val4'):
+            return arg1, arg2, arg3, arg4
         val1 = mock.Mock()
         val2 = mock.Mock()
         val3 = mock.Mock()
-        self.assertEqual((val1, val2, 'val3'), function(val1, val2))
-        self.assertEqual((val1, val2, 'val3'), function(val1)(val2))
-        self.assertEqual((val1, val2, val3), function(val1, val2, val3))
-        self.assertEqual((val1, val2, val3), function(val1)(val2, val3))
-        self.assertEqual((val1, val2, val3), function(val1, arg3=val3)(val2))
+        val4 = mock.Mock()
+        self.assertEqual((val1, val2, 'val3', 'val4'), function(val1, val2))
+        self.assertEqual((val1, val2, 'val3', 'val4'), function(val1)(val2))
+        self.assertEqual(
+            (val1, val2, val3, val4), function(val1, val2, val3, val4)
+        )
+        self.assertEqual(
+            (val1, val2, val3, val4), function(val1)(val2, val3, val4)
+        )
+        self.assertEqual(
+            (val1, val2, val3, val4), function(val1, arg3=val3)(val2, val4)
+        )
 
-    def test_argument_list(self):
+    def test_function_with_default_arguments_only(self):
+        @rail.partial
+        def function(arg1='val1', arg2='val2'):
+            return arg1, arg2
+        val1 = mock.Mock()
+        val2 = mock.Mock()
+        self.assertEqual(('val1', 'val2'), function())
+        self.assertEqual((val1, 'val2'), function(val1))
+        self.assertEqual(('val1', val2), function(arg2=val2))
+        self.assertEqual((val1, val2), function(val1, val2))
+
+    def test_function_with_argument_list(self):
         @rail.partial
         def function(arg1, arg2, *args):
             return (arg1, arg2) + args
@@ -172,7 +196,17 @@ class TestPartial(unittest.TestCase):
             (val1, val2, val3, val4), function(val1)(val2, val3, val4)
         )
 
-    def test_keyword_arguments(self):
+    def test_function_with_argument_list_only(self):
+        @rail.partial
+        def function(*args):
+            return args
+        val1 = mock.Mock()
+        val2 = mock.Mock()
+        self.assertEqual((), function())
+        self.assertEqual((val1,), function(val1))
+        self.assertEqual((val1, val2), function(val1, val2))
+
+    def test_function_with_keyword_arguments(self):
         @rail.partial
         def function(arg1, arg2, **kwargs):
             return (arg1, arg2) + ((kwargs,) if kwargs else ())
@@ -189,6 +223,18 @@ class TestPartial(unittest.TestCase):
         self.assertEqual(
             (val1, val2, {'val3': val3, 'val4': val4}),
             function(val1, val3=val3)(val2, val4=val4)
+        )
+
+    def test_function_with_keyword_arguments_only(self):
+        @rail.partial
+        def function(**kwargs):
+            return kwargs
+        val1 = mock.Mock()
+        val2 = mock.Mock()
+        self.assertEqual({}, function())
+        self.assertEqual({'arg1': val1}, function(arg1=val1))
+        self.assertEqual(
+            {'arg1': val1, 'arg2': val2}, function(arg1=val1, arg2=val2)
         )
 
 
