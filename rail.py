@@ -68,9 +68,10 @@ class PositionalArg(object):
 
 
 class Args(object):
-    def __init__(self, positional_args, args):
+    def __init__(self, positional_args, args, kwargs):
         self.positional_args = positional_args
         self.args = args
+        self.kwargs = kwargs
 
     @classmethod
     def from_argspec(cls, argspec):
@@ -84,12 +85,14 @@ class Args(object):
                 PositionalArg.from_name(name, default)
                 for name, default in zip(argspec.args, arg_defaults)
             ],
-            args=()
+            args=(),
+            kwargs={}
         )
 
     def apply_args(self, *args, **kwargs):
         new_positional_args = copy.copy(self.positional_args)
         new_args = copy.copy(self.args)
+        new_kwargs = copy.copy(self.kwargs)
         for value in args:
             update_index = next(
                 (
@@ -105,21 +108,24 @@ class Args(object):
                 new_args += (value,)
         for name, value in kwargs.items():
             update_index = next(
-                index for index, arg in enumerate(new_positional_args)
-                if arg.name == name
+                (
+                    index for index, arg in enumerate(new_positional_args)
+                    if arg.name == name
+                ),
+                None
             )
-            arg = new_positional_args[update_index]
-            new_positional_args[update_index] = arg.with_value(value)
-        return Args(new_positional_args, new_args)
+            if update_index is not None:
+                arg = new_positional_args[update_index]
+                new_positional_args[update_index] = arg.with_value(value)
+            else:
+                new_kwargs[name] = value
+        return Args(new_positional_args, new_args, new_kwargs)
 
     def all_present(self):
         return all(arg.has_value_or_default() for arg in self.positional_args)
 
-    def values(self):
-        positional_args = tuple(
-            arg.value_or_default() for arg in self.positional_args
-        )
-        return positional_args + self.args
+    def positional_arg_values(self):
+        return tuple(arg.value_or_default() for arg in self.positional_args)
 
 
 class Partial(object):
@@ -137,7 +143,10 @@ class Partial(object):
         return partial.execute() if partial.args.all_present() else partial
 
     def execute(self):
-        return self.function(*self.args.values())
+        return self.function(
+            *(self.args.positional_arg_values() + self.args.args),
+            **self.args.kwargs
+        )
 
 
 def partial(function):

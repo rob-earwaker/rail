@@ -172,6 +172,25 @@ class TestPartial(unittest.TestCase):
             (val1, val2, val3, val4), function(val1)(val2, val3, val4)
         )
 
+    def test_keyword_arguments(self):
+        @rail.partial
+        def function(arg1, arg2, **kwargs):
+            return (arg1, arg2) + ((kwargs,) if kwargs else ())
+        val1 = mock.Mock()
+        val2 = mock.Mock()
+        val3 = mock.Mock()
+        val4 = mock.Mock()
+        self.assertEqual((val1, val2), function(val1, val2))
+        self.assertEqual((val1, val2), function(val1)(val2))
+        self.assertEqual(
+            (val1, val2, {'val3': val3, 'val4': val4}),
+            function(val1, val2, val3=val3, val4=val4)
+        )
+        self.assertEqual(
+            (val1, val2, {'val3': val3, 'val4': val4}),
+            function(val1, val3=val3)(val2, val4=val4)
+        )
+
 
 class TestNew(unittest.TestCase):
     def test_new_returns_identity_function(self):
