@@ -155,6 +155,23 @@ class TestPartial(unittest.TestCase):
         self.assertEqual((val1, val2, val3), function(val1)(val2, val3))
         self.assertEqual((val1, val2, val3), function(val1, arg3=val3)(val2))
 
+    def test_argument_list(self):
+        @rail.partial
+        def function(arg1, arg2, *args):
+            return (arg1, arg2) + args
+        val1 = mock.Mock()
+        val2 = mock.Mock()
+        val3 = mock.Mock()
+        val4 = mock.Mock()
+        self.assertEqual((val1, val2), function(val1, val2))
+        self.assertEqual((val1, val2), function(val1)(val2))
+        self.assertEqual(
+            (val1, val2, val3, val4), function(val1, val2, val3, val4)
+        )
+        self.assertEqual(
+            (val1, val2, val3, val4), function(val1)(val2, val3, val4)
+        )
+
 
 class TestNew(unittest.TestCase):
     def test_new_returns_identity_function(self):
