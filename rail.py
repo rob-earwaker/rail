@@ -89,34 +89,27 @@ class Args(object):
             keyword_args={}
         )
 
+    @staticmethod
+    def get_index(named_args, is_match):
+        return next(
+            (index for index, arg in enumerate(named_args) if is_match(arg)),
+            None
+        )
+
     def apply_args(self, *args, **kwargs):
         named_args = copy.copy(self.named_args)
         list_args = copy.copy(self.list_args)
         keyword_args = copy.copy(self.keyword_args)
         for value in args:
-            update_index = next(
-                (
-                    index for index, arg in enumerate(named_args)
-                    if not arg.has_value()
-                ),
-                None
-            )
-            if update_index is not None:
-                arg = named_args[update_index]
-                named_args[update_index] = arg.with_value(value)
+            index = Args.get_index(named_args, lambda arg: not arg.has_value())
+            if index is not None:
+                named_args[index] = named_args[index].with_value(value)
             else:
                 list_args += (value,)
         for name, value in kwargs.items():
-            update_index = next(
-                (
-                    index for index, arg in enumerate(named_args)
-                    if arg.name == name
-                ),
-                None
-            )
-            if update_index is not None:
-                arg = named_args[update_index]
-                named_args[update_index] = arg.with_value(value)
+            index = Args.get_index(named_args, lambda arg: arg.name == name)
+            if index is not None:
+                named_args[index] = named_args[index].with_value(value)
             else:
                 keyword_args[name] = value
         return Args(named_args, list_args, keyword_args)
