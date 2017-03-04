@@ -293,7 +293,7 @@ class TestTrack(unittest.TestCase):
         function1 = mock.Mock(return_value=return_value1)
         function2 = mock.Mock(return_value=return_value2)
         function3 = mock.Mock(return_value=return_value3)
-        function = rail.Track.new(
+        function = rail.compose(
             function1
         ).compose(
             function2,
@@ -311,7 +311,7 @@ class TestTrack(unittest.TestCase):
         function1 = mock.Mock(return_value=return_value1)
         function2 = mock.Mock(return_value=return_value2)
         function3 = mock.Mock()
-        function = rail.Track.new().tee(
+        function = rail.compose().tee(
             function1,
             function2,
             function3
@@ -325,7 +325,7 @@ class TestTrack(unittest.TestCase):
     def test_tee_called_consecutively(self):
         function1 = mock.Mock()
         function2 = mock.Mock()
-        function = rail.Track.new().tee(
+        function = rail.compose().tee(
             function1
         ).tee(
             function2
@@ -347,7 +347,7 @@ class TestTrack(unittest.TestCase):
 
     def test_fold_with_no_error(self):
         expected_value = mock.Mock()
-        function = rail.Track.new().compose(
+        function = rail.compose(
             lambda value: mock.Mock()
         ).fold(
             lambda value: expected_value,
@@ -357,7 +357,7 @@ class TestTrack(unittest.TestCase):
 
     def test_fold_with_error(self):
         expected_error = rail.Error()
-        function = rail.Track.new().compose(
+        function = rail.compose(
             lambda value: rail.raise_exception(expected_error)
         ).fold(
             lambda value: self.fail(),
