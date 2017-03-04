@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/rob-earwaker/rail.svg?branch=master)](https://travis-ci.org/rob-earwaker/rail)
 [![Coverage Status](https://coveralls.io/repos/github/rob-earwaker/rail/badge.svg?branch=master)](https://coveralls.io/github/rob-earwaker/rail?branch=master)
 
-# rail
+# `rail`
 Railway oriented programming (ROP) in Python
 
 ## Concept
@@ -26,6 +26,7 @@ The `rail` package provides mechanisms for composing functions similar to the on
 
 ```python
 >>> import rail
+>>>
 >>> handle_age = rail.compose(validate_age)
 >>> handle_age
 <rail.Track object at 0x...>
@@ -131,5 +132,20 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 'ERROR: 99/04/23 is an invalid date of birth!!!'
 >>> millenium_age('2010-02-17')
 'ERROR: Date of birth is before 2000-01-01!!!'
+>>>
+```
+
+## `rail.compose`
+The `rail.compose` function should be used to create new `rail.Track` objects by composing zero or more functions. Since functions in Python can only return a single value, every function provided in the composition, including the first, must accept a single argument only:
+
+```python
+>>> import rail
+>>>
+>>> func = rail.compose(
+...     lambda value: value * 2,
+...     lambda value: value + 3
+... )
+>>> func(4)
+11
 >>>
 ```
