@@ -22,7 +22,7 @@ ValueError: -4 is an invalid age!
 >>>
 ```
 
-The `rail` package provides mechanisms for composing functions similar to the one above into a ROP-style track, with convenient error handling options for failure cases. As an example, the `validate_age` function can be composed using the `rail.compose` function:
+The `rail` package provides mechanisms for composing functions similar to the one above into a ROP-style track, with convenient error handling options for failure cases. As an example, the `validate_age` function can be composed using the [`rail.compose`](#railcompose) function:
 
 ```python
 >>> import rail
@@ -136,7 +136,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ```
 
 ## `rail.compose`
-The `rail.compose` function should be used to create new `rail.Track` objects by composing zero or more functions. Since functions in Python can only return a single value, every function provided in the composition, including the first, must accept a single argument only:
+The [`rail.compose`](#railcompose) function should be used to create new `rail.Track` objects by composing zero or more functions. Since functions in Python can only return a single value, every function provided in the composition, including the first, must accept a single argument only:
 
 ```python
 >>> import rail
@@ -150,7 +150,7 @@ The `rail.compose` function should be used to create new `rail.Track` objects by
 >>>
 ```
 
-If `rail.compose` is called with no functions, the result is equivalent to a `rail.Track` composed with the `rail.identity` function only:
+If [`rail.compose`](#railcompose) is called with no functions, the result is equivalent to a `rail.Track` composed with the `rail.identity` function only:
 
 ```python
 >>> func = rail.compose()
