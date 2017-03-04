@@ -149,3 +149,12 @@ The `rail.compose` function should be used to create new `rail.Track` objects by
 11
 >>>
 ```
+
+If `rail.compose` is called with no functions, the result is equivalent to a `rail.Track` composed with the `rail.identity` function only:
+
+```python
+>>> func = rail.compose()
+>>> func('hello!')
+'hello!'
+>>>
+```
