@@ -41,7 +41,7 @@ def match_type(*args):
     ])
 
 
-class PositionalArg(object):
+class NamedArg(object):
     NO_VALUE = object()
     NO_DEFAULT = object()
 
@@ -52,19 +52,19 @@ class PositionalArg(object):
 
     @classmethod
     def from_name(cls, name, default=NO_DEFAULT):
-        return cls(name, default, value=PositionalArg.NO_VALUE)
+        return cls(name, default, value=NamedArg.NO_VALUE)
 
     def has_value(self):
-        return self.value != PositionalArg.NO_VALUE
+        return self.value != NamedArg.NO_VALUE
 
     def has_value_or_default(self):
-        return self.has_value() or self.default != PositionalArg.NO_DEFAULT
+        return self.has_value() or self.default != NamedArg.NO_DEFAULT
 
     def value_or_default(self):
         return self.value if self.has_value() else self.default
 
     def with_value(self, value):
-        return PositionalArg(self.name, self.default, value)
+        return NamedArg(self.name, self.default, value)
 
 
 class Args(object):
@@ -78,11 +78,11 @@ class Args(object):
         defaults = argspec.defaults if argspec.defaults is not None else ()
         non_default_arg_count = len(argspec.args) - len(defaults)
         arg_defaults = (
-            (PositionalArg.NO_DEFAULT,) * non_default_arg_count + defaults
+            (NamedArg.NO_DEFAULT,) * non_default_arg_count + defaults
         )
         return cls(
             named_args=[
-                PositionalArg.from_name(name, default)
+                NamedArg.from_name(name, default)
                 for name, default in zip(argspec.args, arg_defaults)
             ],
             list_args=(),
