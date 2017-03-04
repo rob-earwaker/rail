@@ -136,10 +136,14 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ```
 
 ## `rail.compose`
-The [`rail.compose`](#railcompose) function should be used to create new [`rail.Track`](#railtrack) objects by composing zero or more functions. Since functions in Python can only return a single value, every function provided in the composition, including the first, must accept a single argument only:
+The [`rail.compose`](#railcompose) function composes zero or more functions and returns a new [`rail.Track`](#railtrack) object. Composition has the effect of chaining functions together such that on execution the return value of the first function is passed to the second, and the return value from the second is then passed to the third, and so on. Since functions in Python can only return a single value, every function provided in the composition, including the first, must accept a single argument only. If [`rail.compose`](#railcompose) is called with no functions, the result is equivalent to a [`rail.Track`](#railtrack) composed with the [`rail.identity`](#railidentity) function only.
 
 ```python
 >>> import rail
+>>>
+>>> func = rail.compose()
+>>> func('hello!')
+'hello!'
 >>>
 >>> func = rail.compose(
 ...     lambda value: value * 2,
@@ -150,20 +154,46 @@ The [`rail.compose`](#railcompose) function should be used to create new [`rail.
 >>>
 ```
 
-If [`rail.compose`](#railcompose) is called with no functions, the result is equivalent to a [`rail.Track`](#railtrack) composed with the [`rail.identity`](#railidentity) function only:
-
-```python
->>> func = rail.compose()
->>> func('hello!')
-'hello!'
->>>
-```
-
 ## `rail.Track`
 ...
 
-## `rail.Track.fold`
+## `rail.Track.compose`
 ...
+
+## `rail.Track.fold`
+The [`rail.Track.fold`](#railtrackfold) method is intended to allow convergence of the success and error paths of a [`rail.Track`](#railtrack), and hence can be used for error handling. It must be supplied with two arguments - a function to be executed in the success case, and a function to be executed in the error case. Note that calling [`rail.Track.fold`](#railtrackfold) does not execute the [`rail.Track`](#railtrack), it simply adds another function onto the composition chain.
+
+On execution of the [`rail.Track`](#railtrack), any [`rail.Error`](#railerror) exception thrown by a function composed prior to the [`rail.Track.fold`](#railtrackfold) method call will be caught and passed to the error function. If no [`rail.Error`](#railerror) exception is thrown, the success function will be called with the return value of the last function in the composition prior to the [`rail.Track.fold`](#railtrackfold) method call. The [`rail.Track`](#railtrack) execution will then continue with the return value of either the success or error function. For this reason, it is recommended that the return values of the success and error functions are of the same type:
+
+```python
+>>> import rail
+>>>
+>>> func = rail.compose(
+...     lambda value: value if len(value) > 4 else rail.raise_exception(rail.Error())
+... ).fold(
+...     lambda value: 'greater',
+...     lambda error: 'less'
+... ).compose(
+...     lambda message: 'Length is {0} than 4.'.format(message)
+... )
+>>> func([0, 1, 2, 3, 4])
+'Length is greater than 4.'
+>>> func([0, 1])
+'Length is less than 4.'
+>>>
+```
+
+Note that any non-[`rail.Error`](#railerror) exception raised during execution of a function composed prior to the [`rail.Track.fold`](#railtrackfold) method call will not be caught:
+
+```python
+>>> func('hello!')
+'Length is greater than 4.'
+>>> func(9)
+Traceback (most recent call last):
+  ...
+TypeError: object of type 'int' has no len()
+>>>
+```
 
 ## `rail.Error`
 ...
