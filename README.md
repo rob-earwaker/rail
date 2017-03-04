@@ -22,7 +22,7 @@ ValueError: -4 is an invalid age!
 >>>
 ```
 
-The `rail` package provides mechanisms for composing functions similar to the one above into a ROP-style track, with convenient error handling options for failure cases. As an example, the `validate_age` function can be composed using the [`rail.compose`](#railcompose) function:
+The [`rail`](#rail) package provides mechanisms for composing functions similar to the one above into a ROP-style track, with convenient error handling options for failure cases. As an example, the `validate_age` function can be composed using the [`rail.compose`](#railcompose) function:
 
 ```python
 >>> import rail
@@ -33,7 +33,7 @@ The `rail` package provides mechanisms for composing functions similar to the on
 >>>
 ```
 
-A `rail.Track` object is effectively just a wrapper around a function, and can be called directly to execute the function. In this case, we have only composed a single function, so the `rail.Track` object behaves in exactly the same way as the `validate_age` function defined earlier:
+A [`rail.Track`](#railtrack) object is effectively just a wrapper around a function, and can be called directly to execute the function. In this case, we have only composed a single function, so the [`rail.Track`](#railtrack) object behaves in exactly the same way as the `validate_age` function defined earlier:
 
 ```python
 >>> handle_age(7)
@@ -45,7 +45,7 @@ ValueError: -22 is an invalid age!
 >>>
 ```
 
-In order to add error handling to our track, we need the `validate_age` function to throw an exception that the `rail.Track` object will recognise. The `rail` package defines a custom `rail.Error` exception for this purpose.
+In order to add error handling to our track, we need the `validate_age` function to throw an exception that the [`rail.Track`](#railtrack) object will recognise. The [`rail`](#rail) package defines a custom [`rail.Error`](#railerror) exception for this purpose.
 
 ```python
 >>> def validate_age(age):
@@ -67,7 +67,7 @@ rail.Error: -13 is an invalid age!
 >>>
 ```
 
-To add an error handling function onto a track, use the `rail.Track.fold` method. This must be called with two arguments, the first being a function to handle the success case and the second a function to handle the error case. When the track is executed, only one of these functions will be called based on whether a `rail.Error` has been raised, and the track will continue to execute with the result of this function:
+To add an error handling function onto a track, use the [`rail.Track.fold`](#railtrackfold) method. This must be called with two arguments, the first being a function to handle the success case and the second a function to handle the error case. When the track is executed, only one of these functions will be called based on whether a [`rail.Error`](#railerror) has been raised, and the track will continue to execute with the result of this function:
 
 ```python
 >>> handle_age = rail.compose(validate_age).fold(
@@ -136,7 +136,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ```
 
 ## `rail.compose`
-The [`rail.compose`](#railcompose) function should be used to create new `rail.Track` objects by composing zero or more functions. Since functions in Python can only return a single value, every function provided in the composition, including the first, must accept a single argument only:
+The [`rail.compose`](#railcompose) function should be used to create new [`rail.Track`](#railtrack) objects by composing zero or more functions. Since functions in Python can only return a single value, every function provided in the composition, including the first, must accept a single argument only:
 
 ```python
 >>> import rail
@@ -150,7 +150,7 @@ The [`rail.compose`](#railcompose) function should be used to create new `rail.T
 >>>
 ```
 
-If [`rail.compose`](#railcompose) is called with no functions, the result is equivalent to a `rail.Track` composed with the `rail.identity` function only:
+If [`rail.compose`](#railcompose) is called with no functions, the result is equivalent to a [`rail.Track`](#railtrack) composed with the [`rail.identity`](#railidentity) function only:
 
 ```python
 >>> func = rail.compose()
@@ -158,3 +158,15 @@ If [`rail.compose`](#railcompose) is called with no functions, the result is equ
 'hello!'
 >>>
 ```
+
+## `rail.Track`
+...
+
+## `rail.Track.fold`
+...
+
+## `rail.Error`
+...
+
+## `rail.identity`
+...
