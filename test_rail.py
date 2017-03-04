@@ -335,6 +335,16 @@ class TestTrack(unittest.TestCase):
         function1.assert_called_once_with(value)
         function2.assert_called_once_with(value)
 
+    def test_tee_with_error(self):
+        expected_error = rail.Error('error')
+        function = rail.compose().tee(
+            lambda _: rail.raise_exception(expected_error)
+        ).fold(
+            lambda value: self.fail(),
+            rail.identity
+        )
+        self.assertEqual(expected_error, function(mock.Mock()))
+
     def test_fold_with_no_error(self):
         expected_value = mock.Mock()
         function = rail.Track.new().compose(
