@@ -187,9 +187,9 @@ In the example below, both the [`rail.compose`](#railcompose) function and the [
 ... ).compose(
 ...     lambda message: 'Length is {0} than 4.'.format(message)
 ... )
->>> func([0, 1, 2, 3, 4])
+>>> func('hello')
 'Length is greater than 4.'
->>> func([0, 1])
+>>> func('hi')
 'Length is less than 4.'
 >>>
 ```
@@ -197,8 +197,6 @@ In the example below, both the [`rail.compose`](#railcompose) function and the [
 Note that any non-[`rail.Error`](#railerror) exception raised during execution of a function composed prior to the [`rail.Track.fold`](#railtrackfold) method call will not be caught:
 
 ```python
->>> func('hello!')
-'Length is greater than 4.'
 >>> func(9)
 Traceback (most recent call last):
   ...
