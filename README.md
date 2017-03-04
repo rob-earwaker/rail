@@ -1,10 +1,14 @@
 [![Build Status](https://travis-ci.org/rob-earwaker/rail.svg?branch=master)](https://travis-ci.org/rob-earwaker/rail)
 [![Coverage Status](https://coveralls.io/repos/github/rob-earwaker/rail/badge.svg?branch=master)](https://coveralls.io/github/rob-earwaker/rail?branch=master)
 
+
 # `rail`
+
 Railway oriented programming (ROP) in Python
 
+
 ## Concept
+
 The key idea of ROP is that during execution you can either be on the success track or on the failure track. In other languages, this concept is usually encapsulated by an `Either` type (or similar) that represents either a success or failure, requiring that functions return an instance of `Either` containing either a success value or a failure value. In Python, a more standard way of dealing with failures is to simply raise an exception and leave it to some function higher up the call stack to deal with the error in whatever way is appropriate:
 
 ```python
@@ -135,7 +139,9 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 >>>
 ```
 
+
 ## `rail.compose`
+
 The [`rail.compose`](#railcompose) function composes zero or more functions and returns a new [`rail.Track`](#railtrack) object. Composition has the effect of chaining functions together such that on execution the return value of the first function is passed to the second, and the return value from the second is then passed to the third, and so on. Since functions in Python can only return a single value, every function provided in the composition, including the first, must accept a single argument only. If [`rail.compose`](#railcompose) is called with no functions, the result is equivalent to a [`rail.Track`](#railtrack) composed with the [`rail.identity`](#railidentity) function only.
 
 ```python
@@ -157,13 +163,16 @@ The [`rail.compose`](#railcompose) function composes zero or more functions and 
 ## `rail.Track`
 ...
 
+
 ## `rail.Track.compose`
 ...
 
-## `rail.Track.fold`
-The [`rail.Track.fold`](#railtrackfold) method is intended to allow convergence of the success and error paths of a [`rail.Track`](#railtrack), and hence can be used for error handling. It must be supplied with two arguments - a function to be executed in the success case, and a function to be executed in the error case. Note that calling [`rail.Track.fold`](#railtrackfold) does not execute the [`rail.Track`](#railtrack), it simply adds another function onto the composition chain.
 
-On execution of the [`rail.Track`](#railtrack), any [`rail.Error`](#railerror) exception thrown by a function composed prior to the [`rail.Track.fold`](#railtrackfold) method call will be caught and passed to the error function. If no [`rail.Error`](#railerror) exception is thrown, the success function will be called with the return value of the last function in the composition prior to the [`rail.Track.fold`](#railtrackfold) method call. The [`rail.Track`](#railtrack) execution will then continue with the return value of either the success or error function. For this reason, it is recommended that the return values of the success and error functions are of the same type:
+## `rail.Track.fold`
+
+The [`rail.Track.fold`](#railtrackfold) method allows for convergence of the success and error paths of a [`rail.Track`](#railtrack), and can therefore be used for error handling. It must be supplied with two arguments - a function to be executed in the success case, and a function to be executed in the error case. Note that calling [`rail.Track.fold`](#railtrackfold) does not execute the [`rail.Track`](#railtrack), it simply composes another function and returns the new [`rail.Track`](#railtrack) object.
+
+On execution of the [`rail.Track`](#railtrack), any [`rail.Error`](#railerror) exception thrown by a function composed prior to the [`rail.Track.fold`](#railtrackfold) method call will be caught and passed to the error function. If no [`rail.Error`](#railerror) exception is thrown, the success function will be called with the return value of the last function in the composition prior to the [`rail.Track.fold`](#railtrackfold) method call. The [`rail.Track`](#railtrack) execution will then continue with the return value of either the success or error function. For this reason, it is recommended that the return values of the success and error functions are of the same type. In the example below, both the [`rail.compose`](#railcompose) function and the [`rail.Track.compose`](#railtrackcompose) method are used to create the function compositions before and after the [`rail.Track.fold`](#railtrackfold) method call respectively. The [`rail.raise_exception`](#railraiseexception) function is also used to raise a [`rail.Error`](#railerror) from within the composed lambda function.
 
 ```python
 >>> import rail
@@ -195,8 +204,14 @@ TypeError: object of type 'int' has no len()
 >>>
 ```
 
+
 ## `rail.Error`
 ...
 
+
 ## `rail.identity`
+...
+
+
+## `rail.raise_exception`
 ...
