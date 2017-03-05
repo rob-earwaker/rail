@@ -26,18 +26,18 @@ class UnmatchedValueError(Error):
 
 
 def match(*args):
-    def get_map_function(value):
-        for is_match, map_function in args:
+    def get_map_func(value):
+        for is_match, map_func in args:
             if is_match(value):
-                return map_function
+                return map_func
         raise UnmatchedValueError(value)
-    return lambda error: get_map_function(error)(error)
+    return lambda error: get_map_func(error)(error)
 
 
 def match_type(*args):
     return match(*[
-        (lambda value, types=types: isinstance(value, types), map_function)
-        for types, map_function in args
+        (lambda value, types=types: isinstance(value, types), map_func)
+        for types, map_func in args
     ])
 
 

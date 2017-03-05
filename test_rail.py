@@ -106,262 +106,262 @@ class TestMatchType(unittest.TestCase):
 
 
 class TestPartial(unittest.TestCase):
-    def test_function_with_no_args(self):
+    def test_func_with_no_args(self):
         @rail.partial
-        def function():
+        def func():
             return 'value'
-        self.assertEqual('value', function())
+        self.assertEqual('value', func())
 
-    def test_function_with_single_arg(self):
+    def test_func_with_single_arg(self):
         @rail.partial
-        def function(arg):
+        def func(arg):
             return arg
         value = mock.Mock()
-        self.assertEqual(value, function(value))
+        self.assertEqual(value, func(value))
 
-    def test_function_with_multiple_args(self):
+    def test_func_with_multiple_args(self):
         @rail.partial
-        def function(arg1, arg2, arg3):
+        def func(arg1, arg2, arg3):
             return arg1, arg2, arg3
         val1 = mock.Mock()
         val2 = mock.Mock()
         val3 = mock.Mock()
-        self.assertEqual((val1, val2, val3), function(val1, val2, val3))
-        self.assertEqual((val1, val2, val3), function(val1)(val2, val3))
-        self.assertEqual((val1, val2, val3), function(val1, val2)(val3))
-        self.assertEqual((val1, val2, val3), function(val1)(val2)(val3))
+        self.assertEqual((val1, val2, val3), func(val1, val2, val3))
+        self.assertEqual((val1, val2, val3), func(val1)(val2, val3))
+        self.assertEqual((val1, val2, val3), func(val1, val2)(val3))
+        self.assertEqual((val1, val2, val3), func(val1)(val2)(val3))
 
-    def test_function_with_arguments_applied_out_of_order(self):
+    def test_func_with_arguments_applied_out_of_order(self):
         @rail.partial
-        def function(arg1, arg2, arg3):
+        def func(arg1, arg2, arg3):
             return arg1, arg2, arg3
         val1 = mock.Mock()
         val2 = mock.Mock()
         val3 = mock.Mock()
-        self.assertEqual((val1, val2, val3), function(arg2=val2)(val1, val3))
-        self.assertEqual((val1, val2, val3), function(arg3=val3)(val1, val2))
+        self.assertEqual((val1, val2, val3), func(arg2=val2)(val1, val3))
+        self.assertEqual((val1, val2, val3), func(arg3=val3)(val1, val2))
         self.assertEqual(
-            (val1, val2, val3), function(arg2=val2, arg3=val3)(val1)
+            (val1, val2, val3), func(arg2=val2, arg3=val3)(val1)
         )
         self.assertEqual(
-            (val1, val2, val3), function(arg3=val3)(arg2=val2)(val1)
+            (val1, val2, val3), func(arg3=val3)(arg2=val2)(val1)
         )
-        self.assertEqual((val1, val2, val3), function(val1, arg3=val3)(val2))
+        self.assertEqual((val1, val2, val3), func(val1, arg3=val3)(val2))
 
-    def test_function_with_default_arguments(self):
+    def test_func_with_default_arguments(self):
         @rail.partial
-        def function(arg1, arg2, arg3='val3', arg4='val4'):
+        def func(arg1, arg2, arg3='val3', arg4='val4'):
             return arg1, arg2, arg3, arg4
         val1 = mock.Mock()
         val2 = mock.Mock()
         val3 = mock.Mock()
         val4 = mock.Mock()
-        self.assertEqual((val1, val2, 'val3', 'val4'), function(val1, val2))
-        self.assertEqual((val1, val2, 'val3', 'val4'), function(val1)(val2))
+        self.assertEqual((val1, val2, 'val3', 'val4'), func(val1, val2))
+        self.assertEqual((val1, val2, 'val3', 'val4'), func(val1)(val2))
         self.assertEqual(
-            (val1, val2, val3, val4), function(val1, val2, val3, val4)
+            (val1, val2, val3, val4), func(val1, val2, val3, val4)
         )
         self.assertEqual(
-            (val1, val2, val3, val4), function(val1)(val2, val3, val4)
+            (val1, val2, val3, val4), func(val1)(val2, val3, val4)
         )
         self.assertEqual(
-            (val1, val2, val3, val4), function(val1, arg3=val3)(val2, val4)
+            (val1, val2, val3, val4), func(val1, arg3=val3)(val2, val4)
         )
 
-    def test_function_with_default_arguments_only(self):
+    def test_func_with_default_arguments_only(self):
         @rail.partial
-        def function(arg1='val1', arg2='val2'):
+        def func(arg1='val1', arg2='val2'):
             return arg1, arg2
         val1 = mock.Mock()
         val2 = mock.Mock()
-        self.assertEqual(('val1', 'val2'), function())
-        self.assertEqual((val1, 'val2'), function(val1))
-        self.assertEqual(('val1', val2), function(arg2=val2))
-        self.assertEqual((val1, val2), function(val1, val2))
+        self.assertEqual(('val1', 'val2'), func())
+        self.assertEqual((val1, 'val2'), func(val1))
+        self.assertEqual(('val1', val2), func(arg2=val2))
+        self.assertEqual((val1, val2), func(val1, val2))
 
-    def test_function_with_argument_list(self):
+    def test_func_with_argument_list(self):
         @rail.partial
-        def function(arg1, arg2, *args):
+        def func(arg1, arg2, *args):
             return (arg1, arg2) + args
         val1 = mock.Mock()
         val2 = mock.Mock()
         val3 = mock.Mock()
         val4 = mock.Mock()
-        self.assertEqual((val1, val2), function(val1, val2))
-        self.assertEqual((val1, val2), function(val1)(val2))
+        self.assertEqual((val1, val2), func(val1, val2))
+        self.assertEqual((val1, val2), func(val1)(val2))
         self.assertEqual(
-            (val1, val2, val3, val4), function(val1, val2, val3, val4)
+            (val1, val2, val3, val4), func(val1, val2, val3, val4)
         )
         self.assertEqual(
-            (val1, val2, val3, val4), function(val1)(val2, val3, val4)
+            (val1, val2, val3, val4), func(val1)(val2, val3, val4)
         )
 
-    def test_function_with_argument_list_only(self):
+    def test_func_with_argument_list_only(self):
         @rail.partial
-        def function(*args):
+        def func(*args):
             return args
         val1 = mock.Mock()
         val2 = mock.Mock()
-        self.assertEqual((), function())
-        self.assertEqual((val1,), function(val1))
-        self.assertEqual((val1, val2), function(val1, val2))
+        self.assertEqual((), func())
+        self.assertEqual((val1,), func(val1))
+        self.assertEqual((val1, val2), func(val1, val2))
 
-    def test_function_with_keyword_arguments(self):
+    def test_func_with_keyword_arguments(self):
         @rail.partial
-        def function(arg1, arg2, **kwargs):
+        def func(arg1, arg2, **kwargs):
             return (arg1, arg2) + ((kwargs,) if kwargs else ())
         val1 = mock.Mock()
         val2 = mock.Mock()
         val3 = mock.Mock()
         val4 = mock.Mock()
-        self.assertEqual((val1, val2), function(val1, val2))
-        self.assertEqual((val1, val2), function(val1)(val2))
+        self.assertEqual((val1, val2), func(val1, val2))
+        self.assertEqual((val1, val2), func(val1)(val2))
         self.assertEqual(
             (val1, val2, {'val3': val3, 'val4': val4}),
-            function(val1, val2, val3=val3, val4=val4)
+            func(val1, val2, val3=val3, val4=val4)
         )
         self.assertEqual(
             (val1, val2, {'val3': val3, 'val4': val4}),
-            function(val1, val3=val3)(val2, val4=val4)
+            func(val1, val3=val3)(val2, val4=val4)
         )
 
-    def test_function_with_keyword_arguments_only(self):
+    def test_func_with_keyword_arguments_only(self):
         @rail.partial
-        def function(**kwargs):
+        def func(**kwargs):
             return kwargs
         val1 = mock.Mock()
         val2 = mock.Mock()
-        self.assertEqual({}, function())
-        self.assertEqual({'arg1': val1}, function(arg1=val1))
+        self.assertEqual({}, func())
+        self.assertEqual({'arg1': val1}, func(arg1=val1))
         self.assertEqual(
-            {'arg1': val1, 'arg2': val2}, function(arg1=val1, arg2=val2)
+            {'arg1': val1, 'arg2': val2}, func(arg1=val1, arg2=val2)
         )
 
 
 class TestCompose(unittest.TestCase):
-    def test_compose_with_no_functions(self):
-        function = rail.compose()
+    def test_compose_with_no_funcs(self):
+        func = rail.compose()
         value = mock.Mock()
-        self.assertEqual(value, function(value))
+        self.assertEqual(value, func(value))
 
     def test_compose_with_no_error(self):
         expected_value = mock.Mock()
-        function = rail.compose(
+        func = rail.compose(
             lambda value: expected_value
         )
-        self.assertEqual(expected_value, function(mock.Mock()))
+        self.assertEqual(expected_value, func(mock.Mock()))
 
     def test_compose_with_error(self):
         with self.assertRaises(rail.Error) as context:
-            function = rail.compose(
+            func = rail.compose(
                 lambda value: rail.raise_error(rail.Error('error'))
             )
-            function(mock.Mock())
+            func(mock.Mock())
         self.assertEqual('error', str(context.exception))
 
-    def test_compose_with_multiple_functions(self):
+    def test_compose_with_multiple_funcs(self):
         return_value1 = mock.Mock()
         return_value2 = mock.Mock()
         return_value3 = mock.Mock()
-        function1 = mock.Mock(return_value=return_value1)
-        function2 = mock.Mock(return_value=return_value2)
-        function3 = mock.Mock(return_value=return_value3)
-        function = rail.compose(
-            function1,
-            function2,
-            function3
+        func1 = mock.Mock(return_value=return_value1)
+        func2 = mock.Mock(return_value=return_value2)
+        func3 = mock.Mock(return_value=return_value3)
+        func = rail.compose(
+            func1,
+            func2,
+            func3
         )
         value = mock.Mock()
-        self.assertEqual(return_value3, function(value))
-        function1.assert_called_once_with(value)
-        function2.assert_called_once_with(return_value1)
-        function3.assert_called_once_with(return_value2)
+        self.assertEqual(return_value3, func(value))
+        func1.assert_called_once_with(value)
+        func2.assert_called_once_with(return_value1)
+        func3.assert_called_once_with(return_value2)
 
 
 class TestTrack(unittest.TestCase):
     def test_new(self):
-        function = rail.Track.new()
+        func = rail.Track.new()
         value = mock.Mock()
-        self.assertEqual(value, function(value))
+        self.assertEqual(value, func(value))
 
-    def test_compose_with_existing_function(self):
+    def test_compose_with_existing_func(self):
         return_value1 = mock.Mock()
         return_value2 = mock.Mock()
         return_value3 = mock.Mock()
-        function1 = mock.Mock(return_value=return_value1)
-        function2 = mock.Mock(return_value=return_value2)
-        function3 = mock.Mock(return_value=return_value3)
-        function = rail.Track.new().compose(
-            function1
+        func1 = mock.Mock(return_value=return_value1)
+        func2 = mock.Mock(return_value=return_value2)
+        func3 = mock.Mock(return_value=return_value3)
+        func = rail.Track.new().compose(
+            func1
         ).compose(
-            function2,
-            function3
+            func2,
+            func3
         )
         value = mock.Mock()
-        self.assertEqual(return_value3, function(value))
-        function1.assert_called_once_with(value)
-        function2.assert_called_once_with(return_value1)
-        function3.assert_called_once_with(return_value2)
+        self.assertEqual(return_value3, func(value))
+        func1.assert_called_once_with(value)
+        func2.assert_called_once_with(return_value1)
+        func3.assert_called_once_with(return_value2)
 
-    def test_tee_with_multiple_functions(self):
+    def test_tee_with_multiple_funcs(self):
         return_value1 = mock.Mock()
         return_value2 = mock.Mock()
-        function1 = mock.Mock(return_value=return_value1)
-        function2 = mock.Mock(return_value=return_value2)
-        function3 = mock.Mock()
-        function = rail.Track.new().tee(
-            function1,
-            function2,
-            function3
+        func1 = mock.Mock(return_value=return_value1)
+        func2 = mock.Mock(return_value=return_value2)
+        func3 = mock.Mock()
+        func = rail.Track.new().tee(
+            func1,
+            func2,
+            func3
         )
         value = mock.Mock()
-        self.assertEqual(value, function(value))
-        function1.assert_called_once_with(value)
-        function2.assert_called_once_with(return_value1)
-        function3.assert_called_once_with(return_value2)
+        self.assertEqual(value, func(value))
+        func1.assert_called_once_with(value)
+        func2.assert_called_once_with(return_value1)
+        func3.assert_called_once_with(return_value2)
 
     def test_tee_called_consecutively(self):
-        function1 = mock.Mock()
-        function2 = mock.Mock()
-        function = rail.Track.new().tee(
-            function1
+        func1 = mock.Mock()
+        func2 = mock.Mock()
+        func = rail.Track.new().tee(
+            func1
         ).tee(
-            function2
+            func2
         )
         value = mock.Mock()
-        self.assertEqual(value, function(value))
-        function1.assert_called_once_with(value)
-        function2.assert_called_once_with(value)
+        self.assertEqual(value, func(value))
+        func1.assert_called_once_with(value)
+        func2.assert_called_once_with(value)
 
     def test_tee_with_error(self):
         expected_error = rail.Error('error')
-        function = rail.Track.new().tee(
+        func = rail.Track.new().tee(
             lambda _: rail.raise_error(expected_error)
         ).fold(
             lambda value: self.fail(),
             rail.identity
         )
-        self.assertEqual(expected_error, function(mock.Mock()))
+        self.assertEqual(expected_error, func(mock.Mock()))
 
     def test_fold_with_no_error(self):
         expected_value = mock.Mock()
-        function = rail.Track.new().compose(
+        func = rail.Track.new().compose(
             lambda value: mock.Mock()
         ).fold(
             lambda value: expected_value,
             lambda error: self.fail()
         )
-        self.assertEqual(expected_value, function(mock.Mock()))
+        self.assertEqual(expected_value, func(mock.Mock()))
 
     def test_fold_with_error(self):
         expected_error = rail.Error()
-        function = rail.Track.new().compose(
+        func = rail.Track.new().compose(
             lambda value: rail.raise_error(expected_error)
         ).fold(
             lambda value: self.fail(),
             rail.identity
         )
-        self.assertEqual(expected_error, function(mock.Mock()))
+        self.assertEqual(expected_error, func(mock.Mock()))
 
 
 if __name__ == '__main__':
