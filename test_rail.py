@@ -279,6 +279,11 @@ class TestCompose(unittest.TestCase):
 
 
 class TestTrack(unittest.TestCase):
+    def test_new(self):
+        function = rail.Track.new()
+        value = mock.Mock()
+        self.assertEqual(value, function(value))
+
     def test_compose_with_existing_function(self):
         return_value1 = mock.Mock()
         return_value2 = mock.Mock()
