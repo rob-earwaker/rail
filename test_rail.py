@@ -10,10 +10,10 @@ class TestIdentity(unittest.TestCase):
         self.assertEqual(value, rail.identity(value))
 
 
-class TestRaiseException(unittest.TestCase):
-    def test_raises_exception(self):
+class TestRaiseError(unittest.TestCase):
+    def test_raises_error(self):
         with self.assertRaises(ValueError) as context:
-            rail.raise_exception(ValueError('error'))
+            rail.raise_error(ValueError('error'))
         self.assertEqual('error', str(context.exception))
 
 
@@ -261,7 +261,7 @@ class TestCompose(unittest.TestCase):
     def test_compose_with_error(self):
         with self.assertRaises(rail.Error) as context:
             function = rail.compose(
-                lambda value: rail.raise_exception(rail.Error('error'))
+                lambda value: rail.raise_error(rail.Error('error'))
             )
             function(mock.Mock())
         self.assertEqual('error', str(context.exception))
@@ -338,7 +338,7 @@ class TestTrack(unittest.TestCase):
     def test_tee_with_error(self):
         expected_error = rail.Error('error')
         function = rail.compose().tee(
-            lambda _: rail.raise_exception(expected_error)
+            lambda _: rail.raise_error(expected_error)
         ).fold(
             lambda value: self.fail(),
             rail.identity
@@ -358,7 +358,7 @@ class TestTrack(unittest.TestCase):
     def test_fold_with_error(self):
         expected_error = rail.Error()
         function = rail.compose(
-            lambda value: rail.raise_exception(expected_error)
+            lambda value: rail.raise_error(expected_error)
         ).fold(
             lambda value: self.fail(),
             rail.identity

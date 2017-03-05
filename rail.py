@@ -7,8 +7,8 @@ def identity(value):
     return value
 
 
-def raise_exception(exception):
-    raise exception
+def raise_error(error):
+    raise error
 
 
 def ignore(value):

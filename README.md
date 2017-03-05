@@ -208,13 +208,13 @@ The [`rail.Track.fold`](#railtrackfold) method allows for convergence of the suc
 
 On execution of the [`rail.Track`](#railtrack), any [`rail.Error`](#railerror) exception thrown by a function composed prior to the [`rail.Track.fold`](#railtrackfold) method call will be caught and passed to the error function. If no [`rail.Error`](#railerror) exception is thrown, the success function will be called with the return value of the last function in the composition prior to the [`rail.Track.fold`](#railtrackfold) method call. The [`rail.Track`](#railtrack) execution will then continue with the return value of either the success or error function. For this reason, it is recommended that the return values of the success and error functions are of the same type.
 
-In the example below, both the [`rail.compose`](#railcompose) function and the [`rail.Track.compose`](#railtrackcompose) method are used to create the function compositions before and after the [`rail.Track.fold`](#railtrackfold) method call respectively. The [`rail.raise_exception`](#railraise_exception) function is also used to raise a [`rail.Error`](#railerror) from within the composed lambda function.
+In the example below, both the [`rail.compose`](#railcompose) function and the [`rail.Track.compose`](#railtrackcompose) method are used to create the function compositions before and after the [`rail.Track.fold`](#railtrackfold) method call respectively. The [`rail.raise_error`](#railraise_error) function is also used to raise a [`rail.Error`](#railerror) from within the composed lambda function.
 
 ```python
 >>> import rail
 >>>
 >>> func = rail.compose(
-...     lambda value: value if len(value) > 4 else rail.raise_exception(rail.Error())
+...     lambda value: value if len(value) > 4 else rail.raise_error(rail.Error())
 ... ).fold(
 ...     lambda value: 'greater',
 ...     lambda error: 'less'
@@ -247,5 +247,5 @@ TypeError: object of type 'int' has no len()
 ...
 
 
-## `rail.raise_exception`
+## `rail.raise_error`
 ...
