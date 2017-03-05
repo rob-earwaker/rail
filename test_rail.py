@@ -238,13 +238,6 @@ class TestPartial(unittest.TestCase):
         )
 
 
-class TestNew(unittest.TestCase):
-    def test_new_returns_identity_function(self):
-        function = rail.new()
-        value = mock.Mock()
-        self.assertEqual(value, function(value))
-
-
 class TestCompose(unittest.TestCase):
     def test_compose_with_no_functions(self):
         function = rail.compose()
@@ -293,7 +286,7 @@ class TestTrack(unittest.TestCase):
         function1 = mock.Mock(return_value=return_value1)
         function2 = mock.Mock(return_value=return_value2)
         function3 = mock.Mock(return_value=return_value3)
-        function = rail.compose(
+        function = rail.Track.new().compose(
             function1
         ).compose(
             function2,
@@ -311,7 +304,7 @@ class TestTrack(unittest.TestCase):
         function1 = mock.Mock(return_value=return_value1)
         function2 = mock.Mock(return_value=return_value2)
         function3 = mock.Mock()
-        function = rail.compose().tee(
+        function = rail.Track.new().tee(
             function1,
             function2,
             function3
@@ -325,7 +318,7 @@ class TestTrack(unittest.TestCase):
     def test_tee_called_consecutively(self):
         function1 = mock.Mock()
         function2 = mock.Mock()
-        function = rail.compose().tee(
+        function = rail.Track.new().tee(
             function1
         ).tee(
             function2
@@ -337,7 +330,7 @@ class TestTrack(unittest.TestCase):
 
     def test_tee_with_error(self):
         expected_error = rail.Error('error')
-        function = rail.compose().tee(
+        function = rail.Track.new().tee(
             lambda _: rail.raise_error(expected_error)
         ).fold(
             lambda value: self.fail(),
@@ -347,7 +340,7 @@ class TestTrack(unittest.TestCase):
 
     def test_fold_with_no_error(self):
         expected_value = mock.Mock()
-        function = rail.compose(
+        function = rail.Track.new().compose(
             lambda value: mock.Mock()
         ).fold(
             lambda value: expected_value,
@@ -357,7 +350,7 @@ class TestTrack(unittest.TestCase):
 
     def test_fold_with_error(self):
         expected_error = rail.Error()
-        function = rail.compose(
+        function = rail.Track.new().compose(
             lambda value: rail.raise_error(expected_error)
         ).fold(
             lambda value: self.fail(),

@@ -26,12 +26,12 @@ ValueError: -4 is an invalid age!
 >>>
 ```
 
-The [`rail`](#rail) package provides mechanisms for composing functions similar to the one above into a ROP-style track, with convenient error handling options for failure cases. As an example, the `validate_age` function can be composed using the [`rail.compose`](#railcompose) function:
+The [`rail`](#rail) package provides mechanisms for composing functions similar to the one above into a ROP-style track, with convenient error handling options for failure cases. As an example, the `validate_age` function can be composed using the [`rail.Track.compose`](#railtrackcompose) function on a new [`rail.Track`](#railtrack) object created using the [`rail.Track.new`](#railtracknew) class method:
 
 ```python
 >>> import rail
 >>>
->>> handle_age = rail.compose(validate_age)
+>>> handle_age = rail.Track.new().compose(validate_age)
 >>> handle_age
 <rail.Track object at 0x...>
 >>>
@@ -74,7 +74,9 @@ rail.Error: -13 is an invalid age!
 To add an error handling function onto a track, use the [`rail.Track.fold`](#railtrackfold) method. This must be called with two arguments, the first being a function to handle the success case and the second a function to handle the error case. When the track is executed, only one of these functions will be called based on whether a [`rail.Error`](#railerror) has been raised, and the track will continue to execute with the result of this function:
 
 ```python
->>> handle_age = rail.compose(validate_age).fold(
+>>> handle_age = rail.Track.new().compose(
+...     validate_age
+... ).fold(
 ...     lambda value: '{0} is a valid age!'.format(value),
 ...     lambda error: str(error)
 ... )
@@ -119,7 +121,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ...         raise NegativeAgeError(date)
 ...     return age
 ...
->>> millenium_age = rail.compose(
+>>> millenium_age = rail.Track.new().compose(
 ...     lambda value: parse_date_of_birth(value),
 ...     lambda dob: calculate_age(datetime.date(2000, 1, 1), dob)
 ... ).fold(
@@ -142,7 +144,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 
 ## `rail.compose`
 
-The [`rail.compose`](#railcompose) function composes zero or more functions and returns a new [`rail.Track`](#railtrack) object. Composition has the effect of chaining functions together such that on execution the return value of the first function is passed to the second, and the return value from the second is then passed to the third, and so on. Since functions in Python can only return a single value, every function provided in the composition, including the first, must accept a single argument only.
+The [`rail.compose`](#railcompose) function composes zero or more functions into a single function. Composition has the effect of chaining functions together such that on execution the return value of the first function is passed to the second, and the return value from the second is then passed to the third, and so on. Since functions in Python can only return a single value, every function provided in the composition, including the first, must accept a single argument only.
 
 ```python
 >>> import rail
@@ -159,10 +161,12 @@ The [`rail.compose`](#railcompose) function composes zero or more functions and 
 >>>
 ```
 
-If [`rail.compose`](#railcompose) is called with no functions, the result is equivalent to a [`rail.Track`](#railtrack) composed with the [`rail.identity`](#railidentity) function only:
+If [`rail.compose`](#railcompose) is called with no functions, the result is equal to the [`rail.identity`](#railidentity) function:
 
 ```python
 >>> func = rail.compose()
+>>> func == rail.identity
+True
 >>> func('hello!')
 'hello!'
 >>>
@@ -198,6 +202,10 @@ Container(value=60)
 ...
 
 
+## `rail.Track.new`
+...
+
+
 ## `rail.Track.compose`
 ...
 
@@ -208,12 +216,12 @@ The [`rail.Track.fold`](#railtrackfold) method allows for convergence of the suc
 
 On execution of the [`rail.Track`](#railtrack), any [`rail.Error`](#railerror) exception thrown by a function composed prior to the [`rail.Track.fold`](#railtrackfold) method call will be caught and passed to the error function. If no [`rail.Error`](#railerror) exception is thrown, the success function will be called with the return value of the last function in the composition prior to the [`rail.Track.fold`](#railtrackfold) method call. The [`rail.Track`](#railtrack) execution will then continue with the return value of either the success or error function. For this reason, it is recommended that the return values of the success and error functions are of the same type.
 
-In the example below, both the [`rail.compose`](#railcompose) function and the [`rail.Track.compose`](#railtrackcompose) method are used to create the function compositions before and after the [`rail.Track.fold`](#railtrackfold) method call respectively. The [`rail.raise_error`](#railraise_error) function is also used to raise a [`rail.Error`](#railerror) from within the composed lambda function.
+In the example below, the [`rail.Track.new`](#railtracknew) class method is used to create a new [`rail.Track`](#railtrack) object and the [`rail.Track.compose`](#railtrackcompose) method is used to create the function compositions both before and after the [`rail.Track.fold`](#railtrackfold) method call. The [`rail.raise_error`](#railraise_error) function is also used to raise a [`rail.Error`](#railerror) from within the composed lambda function.
 
 ```python
 >>> import rail
 >>>
->>> func = rail.compose(
+>>> func = rail.Track.new().compose(
 ...     lambda value: value if len(value) > 4 else rail.raise_error(rail.Error())
 ... ).fold(
 ...     lambda value: 'greater',

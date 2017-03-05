@@ -122,64 +122,61 @@ class Args(object):
 
 
 class Partial(object):
-    def __init__(self, function, args):
-        self.function = function
+    def __init__(self, func, args):
+        self.func = func
         self.args = args
 
     @classmethod
-    def from_function(cls, function):
-        argspec = inspect.getargspec(function)
-        return cls(function, Args.from_argspec(argspec))
+    def from_func(cls, func):
+        argspec = inspect.getargspec(func)
+        return cls(func, Args.from_argspec(argspec))
 
     def __call__(self, *args, **kwargs):
-        partial = Partial(self.function, self.args.apply_args(*args, **kwargs))
+        partial = Partial(self.func, self.args.apply_args(*args, **kwargs))
         return partial.execute() if partial.args.all_present() else partial
 
     def execute(self):
-        return self.function(
+        return self.func(
             *(self.args.named_arg_values() + self.args.list_args),
             **self.args.keyword_args
         )
 
 
-def partial(function):
-    return Partial.from_function(function)
+def partial(func):
+    return Partial.from_func(func)
 
 
-def new():
-    return Track.new()
-
-
-def compose(*functions):
-    return Track.new().compose(*functions)
+def compose(*funcs):
+    return functools.reduce(
+        lambda func1, func2: lambda arg: func2(func1(arg)), funcs, identity
+    )
 
 
 class Track(object):
-    def __init__(self, function):
-        self.function = function
+    def __init__(self, func):
+        self.func = func
 
     def __call__(self, arg):
-        return self.function(arg)
+        return self.func(arg)
 
     @classmethod
-    def new(cls, function=identity):
-        return Track(function)
+    def new(cls):
+        return Track(identity)
 
-    def compose(self, *functions):
-        def compose2(function1, function2):
-            return lambda arg: function2(function1(arg))
-        return Track.new(functools.reduce(compose2, functions, self.function))
+    def compose(self, *funcs):
+        return Track(compose(self.func, *funcs))
 
-    def tee(self, *functions):
-        def tee_function(arg):
-            Track.new().compose(*functions)(arg)
+    def tee(self, *funcs):
+        def tee_func(arg):
+            func = compose(*funcs)
+            func(arg)
             return arg
-        return self.compose(tee_function)
+        return self.compose(tee_func)
 
     def fold(self, fold_value, fold_error):
-        def fold_function(arg, function=self.function):
+        def fold_func(arg, func=self.func):
             try:
-                return fold_value(function(arg))
+                return fold_value(func(arg))
             except Error as error:
                 return fold_error(error)
-        return Track.new(fold_function)
+        return Track(fold_func)
