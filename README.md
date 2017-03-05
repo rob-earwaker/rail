@@ -60,10 +60,10 @@ In order to add error handling to our track, we need the `validate_age` function
 >>>
 ```
 
-Note that by default a track has no error handling:
+Note that by default a track has no error handling, even for a [`rail.Error`](#railerror) exception:
 
 ```python
->>> handle_age = rail.compose(validate_age)
+>>> handle_age = rail.Track.new().compose(validate_age)
 >>> handle_age(-13)
 Traceback (most recent call last):
   ...
