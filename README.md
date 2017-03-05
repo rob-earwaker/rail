@@ -252,7 +252,7 @@ Arguments to the [`rail.Track.compose`](#railtrackcompose) method do not have to
 ...     def __str__(self):
 ...         return 'The result is: {0}'.format(str(self.value))
 ...     
->>> func = rail.compose(
+>>> func = rail.Track.new().compose(
 ...     Repeater(3),
 ...     Result,
 ...     str
