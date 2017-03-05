@@ -166,13 +166,6 @@ class Track(object):
     def compose(self, *funcs):
         return Track(compose(self.func, *funcs))
 
-    def tee(self, *funcs):
-        def tee_func(arg):
-            func = compose(*funcs)
-            func(arg)
-            return arg
-        return self.compose(tee_func)
-
     def fold(self, fold_value, fold_error):
         def fold_func(arg, func=self.func):
             try:
@@ -180,3 +173,10 @@ class Track(object):
             except Error as error:
                 return fold_error(error)
         return Track(fold_func)
+
+    def tee(self, *funcs):
+        def tee_func(arg):
+            func = compose(*funcs)
+            func(arg)
+            return arg
+        return self.compose(tee_func)
