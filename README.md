@@ -213,7 +213,18 @@ The following methods are available on a [`rail.Track`](#railtrack) object, all 
 
 ## `rail.Track.new`
 
-...
+The [`rail.Track.new`](#railtracknew) class method is the recommended way to create a [`rail.Track`](#railtrack) object. It essentially wraps the [`rail.identity`](#railidentity) function in a [`rail.Track`](#railtrack) object.
+
+```python
+>>> import rail
+>>>
+>>> func = rail.Track.new()
+>>> func
+<rail.Track object at 0x...>
+>>> func('hey')
+'hey'
+>>>
+```
 
 
 ## `rail.Track.compose`
