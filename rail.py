@@ -184,7 +184,6 @@ class Track(object):
 
     def tee(self, *funcs):
         def tee_func(arg):
-            func = compose(*funcs)
-            func(arg)
+            execute(arg, *funcs)
             return arg
         return self.compose(tee_func)
