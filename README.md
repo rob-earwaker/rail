@@ -318,7 +318,7 @@ TypeError: object of type 'int' has no len()
 >>>
 ```
 
-Note that the [`rail.Track.fold`](#railtrackfold) method is equivalent to calling [`rail.Track.compose`](#railtrackcompose) with the success function followed by calling [`rail.Track.handle`](#railtrackhandle) with the error function, i.e. `rail.Track.fold(<success_func>, <error_func>)` is equivalent to `rail.Track.compose(<success_func>).handle(<error_func>)`.
+Note that the [`rail.Track.fold`](#railtrackfold) method is equivalent to calling [`rail.Track.compose`](#railtrackcompose) with the success function followed by calling [`rail.Track.handle`](#railtrackhandle) with the error function, i.e. `rail.Track.fold(success_func, error_func)` is equivalent to `rail.Track.compose(success_func).handle(error_func)`.
 
 
 ## `rail.Track.handle`
@@ -361,7 +361,7 @@ ValueError: hello
 >>>
 ```
 
-Note that the [`rail.Track.handle`](#railtrackhandle) method is equivalent to calling [`rail.Track.fold`](#railtrackfold) with the [`rail.identity`](#railidentity) function as the success case, i.e. `rail.Track.handle(<handle_error>)` is equivalent to `rail.Track.fold(rail.identity, <handle_error>)`.
+Note that the [`rail.Track.handle`](#railtrackhandle) method is equivalent to calling [`rail.Track.fold`](#railtrackfold) with the [`rail.identity`](#railidentity) function as the success case, i.e. `rail.Track.handle(handle_error)` is equivalent to `rail.Track.fold(rail.identity, handle_error)`.
 
 
 ## `rail.Track.tee`
