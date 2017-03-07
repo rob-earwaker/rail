@@ -321,56 +321,47 @@ TypeError: object of type 'int' has no len()
 
 ## `rail.Track.tee`
 
-The [`rail.Track.tee`](#railtracktee) method allows execution of functions on a dead-end branch off the current [`rail.Track`](#railtrack) object. Similar to the [`rail.Track.compose`](#railtrackcompose) method, the [`rail.Track.tee`](#railtracktee) method takes a series of functions, the input of which will be the return value of the last composed function on the [`rail.Track`](#railtrack) object. The difference is that this same input value is returned once the branch has finished executing, instead of the return value of the final function in the branch. In the example below, the item returned from the function in the [`rail.Track.compose`](#railtrackcompose) method call is passed to both calls to the [`rail.Track.tee`](#railtracktee) method as well as the success function of the [`rail.Track.fold`](#railtrackfold) method. The return values of the functions in the [`rail.Track.tee`](#railtracktee) method calls, which in this case are `None`, are ignored. Note that the [`rail.Track`](#railtrack) object is created using the [`rail.Track.new`](#railtracknew) class method.
+The [`rail.Track.tee`](#railtracktee) method allows execution of functions on a dead-end branch off the current [`rail.Track`](#railtrack) object. Similar to the [`rail.Track.compose`](#railtrackcompose) method, the [`rail.Track.tee`](#railtracktee) method takes a series of functions, the input of which will be the return value of the last composed function on the [`rail.Track`](#railtrack) object. The difference is that this same input value is returned once the branch has finished executing, instead of the return value of the final function in the branch. In the example below, the item passed to the function is passed to the function in the [`rail.Track.tee`](#railtracktee) method call as well as the function in the subsequent [`rail.Track.compose`](#railtrackcompose) method call. The return values of the function in the [`rail.Track.tee`](#railtracktee) method call, which in this case is `None`, is ignored.
 
 ```python
 >>> import rail
 >>>
->>> shelf = ['apple', 'orange', 'pear']
 >>> basket = []
->>>
->>> func = rail.Track.new().compose(
-...     lambda item: item if item in shelf else rail.raise_error(rail.Error())
-... ).tee(
-...     lambda item: shelf.remove(item)
-... ).tee(
+>>> func = rail.Track.new().tee(
 ...     lambda item: basket.append(item)
-... ).fold(
-...     lambda item: 'Added {0} to basket'.format(item),
-...     lambda error: 'Item not found on shelf!'
+... ).compose(
+...     lambda item: 'Added {0} to basket'.format(item)
 ... )
 >>>
 >>> func('orange')
 'Added orange to basket'
->>> shelf
-['apple', 'pear']
->>> basket
-['orange']
->>>
 >>> func('banana')
-'Item not found on shelf!'
->>> shelf
-['apple', 'pear']
+'Added banana to basket'
 >>> basket
-['orange']
+['orange', 'banana']
 >>>
 ```
 
 Errors raised by a function passed to the [`rail.Track.tee`](#railtracktee) method call halt execution of the [`rail.Track`](#railtrack) object in exactly the same way as any composed function:
 
 ```python
+>>> basket = []
 >>> func = rail.Track.new().tee(
-...     lambda value: value if len(value) < 3 else rail.raise_error(rail.Error())
+...     lambda item: item if len(basket) < 2 else rail.raise_error(rail.Error('too many items')),
+...     lambda item: basket.append(item)
 ... ).compose(
-...     lambda value: value.upper()
-... ).fold(
-...     rail.identity,
-...     lambda value: 'Value too long'
+...     lambda item: 'Added {0} to basket'.format(item)
 ... )
->>> func('hi')
-'HI'
->>> func('hello')
-'Value too long'
+>>> func('pear')
+'Added pear to basket'
+>>> func('melon')
+'Added melon to basket'
+>>> func('apple')
+Traceback (most recent call last):
+  ...
+rail.Error: too many items
+>>> basket
+['pear', 'melon']
 >>>
 ```
 
