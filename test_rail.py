@@ -378,6 +378,34 @@ class TestTrack(unittest.TestCase):
         )
         self.assertEqual(expected_error, func(mock.Mock()))
 
+    def test_handle_with_multiple_funcs(self):
+        expected_error = rail.Error()
+        func = rail.Track.new().compose(
+            lambda value: rail.raise_error(rail.Error())
+        ).handle(
+            lambda error: mock.Mock(),
+            lambda error: expected_error
+        )
+        self.assertEqual(expected_error, func(mock.Mock()))
+
+    def test_handle_with_no_error(self):
+        expected_value = mock.Mock()
+        func = rail.Track.new().compose(
+            lambda value: expected_value
+        ).handle(
+            lambda error: self.fail()
+        )
+        self.assertEqual(expected_value, func(mock.Mock()))
+
+    def test_handle_with_error(self):
+        expected_error = rail.Error()
+        func = rail.Track.new().compose(
+            lambda value: rail.raise_error(expected_error)
+        ).handle(
+            lambda error: error
+        )
+        self.assertEqual(expected_error, func(mock.Mock()))
+
 
 if __name__ == '__main__':
     unittest.main()

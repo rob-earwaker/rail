@@ -319,6 +319,47 @@ TypeError: object of type 'int' has no len()
 ```
 
 
+## `rail.Track.handle`
+
+The [`rail.Track.handle`](#railtrackhandle) method allows for error handling on a [`rail.Track`](#railtrack). It can be supplied with zero or more functions, which are composed into a single error handling function.
+
+On execution of the [`rail.Track`](#railtrack), any [`rail.Error`](#railerror) exception thrown by a function composed prior to the [`rail.Track.handle`](#railtrackhandle) method call will be caught and passed to the error handling function. Execution of the [`rail.Track`](#railtrack) then continues with the value returned by the error handling function. If no [`rail.Error`](#railerror) exception is thrown, the error handling function will not be called, and execution will continue with the return value of the last composed function.
+
+```python
+>>> import rail
+>>>
+>>> func = rail.Track.new().compose(
+...     lambda value: value if value < 10 else rail.raise_error(rail.Error('value must be < 10')),
+...     lambda value: value + 10
+... ).handle(
+...     lambda error: str(error),
+...     lambda message: message.upper()
+... ).compose(
+...     lambda message: 'Result = {0}'.format(message)
+... )
+>>> func(4)
+'Result = 14'
+>>> func(16)
+'Result = VALUE MUST BE < 10'
+>>>
+```
+
+Note that any non-[`rail.Error`](#railerror) exception raised during execution of a function composed prior to the [`rail.Track.handle`](#railtrackhandle) method call will not be caught:
+
+```python
+>>> func = rail.Track.new().compose(
+...     lambda value: rail.raise_error(ValueError(value))
+... ).handle(
+...     lambda error: 'Error handled successfully'
+... )
+>>> func('hello')
+Traceback (most recent call last):
+  ...
+ValueError: hello
+>>>
+```
+
+
 ## `rail.Track.tee`
 
 The [`rail.Track.tee`](#railtracktee) method allows execution of functions on a dead-end branch off the current [`rail.Track`](#railtrack) object. Similar to the [`rail.Track.compose`](#railtrackcompose) method, the [`rail.Track.tee`](#railtracktee) method takes a series of functions, the input of which will be the return value of the last composed function on the [`rail.Track`](#railtrack) object. The difference is that this same input value is returned once the branch has finished executing, instead of the return value of the final function in the branch. In the example below, the item passed to the function is passed to the function in the [`rail.Track.tee`](#railtracktee) method call as well as the function in the subsequent [`rail.Track.compose`](#railtrackcompose) method call. The return values of the function in the [`rail.Track.tee`](#railtracktee) method call, which in this case is `None`, is ignored.
