@@ -198,6 +198,25 @@ Container(value=60)
 ```
 
 
+## `rail.execute`
+
+The [`rail.execute`](#railexecute) function allows a value to be passed through a pipeline of zero or more functions, rather than composing the pipeline and then calling it with a value. The first argument to the [`rail.execute`](#railexecute) function is the value to be passed through the pipeline, and subsequent arguments are the functions that will be composed into the pipeline:
+
+```python
+>>> import rail
+>>>
+>>> rail.execute(
+...     'LA',
+...     lambda value: value * 4,
+...     lambda value: value.lower()
+... )
+'lalalala'
+>>>
+```
+
+Note that the [`rail.execute`](#railexecute) function is equivalent to first composing the pipeline of functions using [`rail.compose`](#railcompose) and then calling the resulting function with the value, i.e. `rail.execute(value, *funcs)` is equivalent to `rail.compose(*funcs)(value)`.
+
+
 ## `rail.Track`
 
 A [`rail.Track`](#railtrack) object is a simple wrapper around a function that provides a variety of methods for modifying the wrapped function. A [`rail.Track`](#railtrack) object is callable in the same way as a function, but it always accepts a single argument only. Calling a [`rail.Track`](#railtrack) object executes the wrapped function.
