@@ -278,6 +278,21 @@ class TestCompose(unittest.TestCase):
         func3.assert_called_once_with(return_value2)
 
 
+class TestExecute(unittest.TestCase):
+    def test_execute(self):
+        val1 = mock.Mock()
+        val2 = mock.Mock()
+        val3 = mock.Mock()
+        self.assertEqual(
+            (val1, val2, val3),
+            rail.execute(
+                (val1,),
+                lambda val: val + (val2,),
+                lambda val: val + (val3,)
+            )
+        )
+
+
 class TestTrack(unittest.TestCase):
     def test_new(self):
         func = rail.Track.new()

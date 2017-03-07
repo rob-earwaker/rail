@@ -152,6 +152,11 @@ def compose(*funcs):
     )
 
 
+def execute(arg, *funcs):
+    func = compose(*funcs)
+    return func(arg)
+
+
 class Track(object):
     def __init__(self, func):
         self.func = func
