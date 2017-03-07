@@ -128,12 +128,19 @@ class Partial(object):
 
     @classmethod
     def from_func(cls, func):
-        argspec = inspect.getargspec(func)
-        return cls(func, Args.from_argspec(argspec))
+        return execute(
+            inspect.getargspec(func),
+            Args.from_argspec,
+            lambda args: cls(func, args)
+        )
 
     def __call__(self, *args, **kwargs):
-        partial = Partial(self.func, self.args.apply_args(*args, **kwargs))
-        return partial.execute() if partial.args.all_present() else partial
+        return execute(
+            self.args.apply_args(*args, **kwargs),
+            lambda args: Partial(self.func, args),
+            lambda partial:
+                partial.execute() if partial.args.all_present() else partial
+        )
 
     def execute(self):
         return self.func(
