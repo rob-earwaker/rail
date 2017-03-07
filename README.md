@@ -208,6 +208,7 @@ The following methods are available on a [`rail.Track`](#railtrack) object, all 
 
 - [`rail.Track.compose`](#railtrackcompose) - composes additional functions onto the wrapped function
 - [`rail.Track.fold`](#railtrackfold) - maps the success or error value of the wrapped function into a new value
+- [`rail.Track.handle`](#railtrackhandle) - maps an error that occurred during execution of the wrapped function into a new value
 - [`rail.Track.tee`](#railtracktee) - creates a new dead-end branch off the wrapped function
 
 
