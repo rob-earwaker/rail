@@ -292,6 +292,22 @@ class TestExecute(unittest.TestCase):
             )
         )
 
+    def test_use_execute_to_create_scope(self):
+        val1 = mock.Mock()
+        val2 = mock.Mock()
+        val3 = mock.Mock()
+        self.assertEqual(
+            (val1, val2, val3),
+            rail.execute(
+                (val1,),
+                lambda arg1: rail.execute(
+                    (val2,),
+                    lambda arg2: arg1 + arg2,
+                    lambda arg: arg + (val3,)
+                )
+            )
+        )
+
 
 class TestTrack(unittest.TestCase):
     def test_new(self):
