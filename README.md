@@ -198,14 +198,14 @@ Container(value=60)
 ```
 
 
-## `rail.execute`
+## `rail.pipe`
 
-The [`rail.execute`](#railexecute) function allows a value to be passed through a pipeline of zero or more functions, rather than composing the pipeline and then calling it with a value. The first argument to the [`rail.execute`](#railexecute) function is the value to be passed through the pipeline, and subsequent arguments are the functions that will be composed into the pipeline:
+The [`rail.pipe`](#railpipe) function allows a value to be passed through a pipeline of zero or more functions, rather than composing the pipeline and then calling it with a value. The first argument to the [`rail.pipe`](#railpipe) function is the value to be passed through the pipeline, and subsequent arguments are the functions that will be composed into the pipeline:
 
 ```python
 >>> import rail
 >>>
->>> rail.execute(
+>>> rail.pipe(
 ...     'LA',
 ...     lambda value: value * 4,
 ...     lambda value: value.lower()
@@ -214,7 +214,7 @@ The [`rail.execute`](#railexecute) function allows a value to be passed through 
 >>>
 ```
 
-Note that the [`rail.execute`](#railexecute) function is equivalent to first composing the pipeline of functions using [`rail.compose`](#railcompose) and then calling the resulting function with the value, i.e. `rail.execute(value, *funcs)` is equivalent to `rail.compose(*funcs)(value)`.
+Note that the [`rail.pipe`](#railpipe) function is equivalent to first composing the pipeline of functions using [`rail.compose`](#railcompose) and then calling the resulting function with the value, i.e. `rail.pipe(value, *funcs)` is equivalent to `rail.compose(*funcs)(value)`.
 
 
 ## `rail.Track`

@@ -278,29 +278,29 @@ class TestCompose(unittest.TestCase):
         func3.assert_called_once_with(return_value2)
 
 
-class TestExecute(unittest.TestCase):
-    def test_execute(self):
+class TestPipe(unittest.TestCase):
+    def test_pipe(self):
         val1 = mock.Mock()
         val2 = mock.Mock()
         val3 = mock.Mock()
         self.assertEqual(
             (val1, val2, val3),
-            rail.execute(
+            rail.pipe(
                 (val1,),
                 lambda val: val + (val2,),
                 lambda val: val + (val3,)
             )
         )
 
-    def test_use_execute_to_create_scope(self):
+    def test_use_pipe_to_create_scope(self):
         val1 = mock.Mock()
         val2 = mock.Mock()
         val3 = mock.Mock()
         self.assertEqual(
             (val1, val2, val3),
-            rail.execute(
+            rail.pipe(
                 (val1,),
-                lambda arg1: rail.execute(
+                lambda arg1: rail.pipe(
                     (val2,),
                     lambda arg2: arg1 + arg2,
                     lambda arg: arg + (val3,)

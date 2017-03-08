@@ -128,14 +128,15 @@ class Partial(object):
 
     @classmethod
     def from_func(cls, func):
-        return execute(
-            inspect.getargspec(func),
+        return pipe(
+            func,
+            inspect.getargspec,
             Args.from_argspec,
             lambda args: cls(func, args)
         )
 
     def __call__(self, *args, **kwargs):
-        return execute(
+        return pipe(
             self.args.apply_args(*args, **kwargs),
             lambda args: Partial(self.func, args),
             lambda partial:
@@ -159,7 +160,7 @@ def compose(*funcs):
     )
 
 
-def execute(arg, *funcs):
+def pipe(arg, *funcs):
     func = compose(*funcs)
     return func(arg)
 
@@ -186,11 +187,14 @@ class Track(object):
             try:
                 return func(arg)
             except Error as error:
-                return execute(error, *funcs)
+                return pipe(error, *funcs)
         return Track(handle_func)
 
     def tee(self, *funcs):
-        def tee_func(arg):
-            execute(arg, *funcs)
-            return arg
-        return self.compose(tee_func)
+        return self.compose(
+            lambda arg: pipe(
+                arg,
+                compose(*funcs),
+                lambda _: arg
+            )
+        )
