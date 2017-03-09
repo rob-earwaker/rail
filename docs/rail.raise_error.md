@@ -1,0 +1,3 @@
+## `rail.raise_error`
+
+...

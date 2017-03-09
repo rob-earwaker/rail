@@ -17,7 +17,7 @@ The [`rail.compose`](#railcompose) function composes zero or more functions into
 >>>
 ```
 
-If [`rail.compose`](#railcompose) is called with no functions, the result is equal to the [`rail.identity`](../README.md#railidentity) function:
+If [`rail.compose`](#railcompose) is called with no functions, the result is equal to the [`rail.identity`](./rail.identity.md#railidentity) function:
 
 ```python
 >>> func = rail.compose()
