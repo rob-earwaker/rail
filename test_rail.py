@@ -7,7 +7,7 @@ import rail
 class TestIdentity(unittest.TestCase):
     def test_returns_input_value(self):
         value = mock.Mock()
-        self.assertEqual(value, rail.identity(value))
+        self.assertEqual(value, rail.identity(value) )
 
 
 class TestRaiseError(unittest.TestCase):

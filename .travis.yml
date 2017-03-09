@@ -3,9 +3,10 @@ python:
   - 2.7
   - 3.6
 script:
-  - pip install nose coverage coveralls
+  - pip install nose coverage coveralls pep8
   - nosetests ./ ./docs
     --with-coverage --cover-package=rail --cover-html --cover-erase
     --with-doctest --doctest-extension=md --doctest-options=+ELLIPSIS,+IGNORE_EXCEPTION_DETAIL
+  - pep8 ./ --show-source
 after_success:
   - coveralls
