@@ -330,6 +330,21 @@ class TestPipe(unittest.TestCase):
         )
 
 
+class TestBranch(unittest.TestCase):
+    def test_with_multiple_funcs(self):
+        input = mock.Mock()
+        func1 = mock.Mock(return_value=mock.Mock())
+        func2 = mock.Mock(return_value=mock.Mock())
+        func3 = mock.Mock()
+        self.assertEqual(
+            input,
+            rail.pipe(input, rail.branch(func1, func2, func3))
+        )
+        func1.assert_called_once_with(input)
+        func2.assert_called_once_with(func1.return_value)
+        func3.assert_called_once_with(func2.return_value)
+
+
 class TestTrack(unittest.TestCase):
     def test_new(self):
         func = rail.Track.new()
@@ -355,23 +370,6 @@ class TestTrack(unittest.TestCase):
         func2.assert_called_once_with(return_value1)
         func3.assert_called_once_with(return_value2)
 
-    def test_tee_with_multiple_funcs(self):
-        return_value1 = mock.Mock()
-        return_value2 = mock.Mock()
-        func1 = mock.Mock(return_value=return_value1)
-        func2 = mock.Mock(return_value=return_value2)
-        func3 = mock.Mock()
-        func = rail.Track.new().tee(
-            func1,
-            func2,
-            func3
-        )
-        value = mock.Mock()
-        self.assertEqual(value, func(value))
-        func1.assert_called_once_with(value)
-        func2.assert_called_once_with(return_value1)
-        func3.assert_called_once_with(return_value2)
-
     def test_tee_called_consecutively(self):
         func1 = mock.Mock()
         func2 = mock.Mock()
@@ -384,16 +382,6 @@ class TestTrack(unittest.TestCase):
         self.assertEqual(value, func(value))
         func1.assert_called_once_with(value)
         func2.assert_called_once_with(value)
-
-    def test_tee_with_error(self):
-        expected_error = rail.Error('error')
-        func = rail.Track.new().tee(
-            lambda _: rail.raise_error(expected_error)
-        ).fold(
-            lambda value: self.fail(),
-            rail.identity
-        )
-        self.assertEqual(expected_error, func(mock.Mock()))
 
     def test_fold_with_no_error(self):
         expected_value = mock.Mock()

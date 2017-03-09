@@ -172,6 +172,14 @@ def pipe(value, *funcs):
     return func(value)
 
 
+def branch(*funcs):
+    return lambda arg: pipe(
+        arg,
+        compose(*funcs),
+        lambda _: arg
+    )
+
+
 class Track(object):
     def __init__(self, func):
         self.func = func
