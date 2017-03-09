@@ -15,7 +15,7 @@ def ignore(value):
     pass
 
 
-def TRY(value, func, handle):
+def try_except(value, func, handle):
     try:
         return func(value)
     except Exception as error:
@@ -199,7 +199,7 @@ class Track(object):
 
     def handle(self, *funcs):
         def handle_func(arg):
-            return TRY(
+            return try_except(
                 arg,
                 self.func,
                 match_type(
