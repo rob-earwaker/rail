@@ -158,7 +158,7 @@ The [`rail.pipe`](#railpipe) function allows a value to be passed through a pipe
 >>>
 ```
 
-Note that the [`rail.pipe`](#railpipe) function is equivalent to first composing the pipeline of functions using [`rail.compose`](docs/rail.compose.md) and then calling the resulting function with the value, i.e. `rail.pipe(value, *funcs)` is equivalent to `rail.compose(*funcs)(value)`.
+Note that the [`rail.pipe`](#railpipe) function is equivalent to first composing the pipeline of functions using [`rail.compose`](docs/rail.compose.md#railcompose) and then calling the resulting function with the value, i.e. `rail.pipe(value, *funcs)` is equivalent to `rail.compose(*funcs)(value)`.
 
 
 ## `rail.Track`
