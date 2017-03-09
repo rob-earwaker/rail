@@ -210,10 +210,4 @@ class Track(object):
         return Track(handle_func)
 
     def tee(self, *funcs):
-        return self.compose(
-            lambda arg: pipe(
-                arg,
-                compose(*funcs),
-                lambda _: arg
-            )
-        )
+        return self.compose(branch(*funcs))
