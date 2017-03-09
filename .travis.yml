@@ -4,8 +4,8 @@ python:
   - 3.6
 script:
   - pip install nose coverage coveralls
-  - nosetests --with-doctest --with-coverage --cover-package=rail
-    --cover-erase --cover-html --doctest-extension=md
-    --doctest-options=+ELLIPSIS,+IGNORE_EXCEPTION_DETAIL
+  - nosetests ./ ./docs
+    --with-coverage --cover-package=rail --cover-html --cover-erase
+    --with-doctest --doctest-extension=md --doctest-options=+ELLIPSIS,+IGNORE_EXCEPTION_DETAIL
 after_success:
   - coveralls
