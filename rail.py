@@ -15,6 +15,13 @@ def ignore(value):
     pass
 
 
+def TRY(value, func, handle):
+    try:
+        return func(value)
+    except Exception as error:
+        return handle(error)
+
+
 class Error(Exception):
     pass
 
@@ -160,9 +167,9 @@ def compose(*funcs):
     )
 
 
-def pipe(arg, *funcs):
+def pipe(value, *funcs):
     func = compose(*funcs)
-    return func(arg)
+    return func(value)
 
 
 class Track(object):
@@ -183,11 +190,15 @@ class Track(object):
         return self.compose(success_func).handle(handle_func)
 
     def handle(self, *funcs):
-        def handle_func(arg, func=self.func):
-            try:
-                return func(arg)
-            except Error as error:
-                return pipe(error, *funcs)
+        def handle_func(arg):
+            return TRY(
+                arg,
+                self.func,
+                match_type(
+                    (Error, compose(*funcs)),
+                    (Exception, raise_error)
+                )
+            )
         return Track(handle_func)
 
     def tee(self, *funcs):

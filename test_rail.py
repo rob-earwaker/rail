@@ -22,6 +22,27 @@ class TestIgnore(unittest.TestCase):
         self.assertIsNone(rail.ignore(mock.Mock()))
 
 
+class TestTry(unittest.TestCase):
+    def test_no_error_raised(self):
+        input = mock.Mock()
+        expected_value = mock.Mock()
+        func = mock.Mock(return_value=expected_value)
+        handle = mock.Mock()
+        self.assertEqual(expected_value, rail.TRY(input, func, handle))
+        func.assert_called_once_with(input)
+        handle.assert_not_called()
+
+    def test_error_raised(self):
+        input = mock.Mock()
+        error = rail.Error()
+        func = mock.Mock(side_effect=lambda _: rail.raise_error(error))
+        output = mock.Mock()
+        handle = mock.Mock(return_value=output)
+        self.assertEqual(output, rail.TRY(input, func, handle))
+        func.assert_called_once_with(input)
+        handle.assert_called_once_with(error)
+
+
 class TestMatch(unittest.TestCase):
     def test_no_match_statements_provided(self):
         value = mock.Mock()
