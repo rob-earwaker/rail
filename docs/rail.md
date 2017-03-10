@@ -5,7 +5,7 @@
 - [`rail.Error`](./rail.Error.md#railerror)
 - [`rail.identity`](./rail.identity.md#railidentity)
 - [`rail.pipe`](./rail.pipe.md#railpipe)
-- [`rail.raise_error`](./rail.raise_error.md#railraise_error)
+- [`rail.RAISE`](./rail.RAISE.md#railraise)
 - [`rail.Track`](./rail.Track.md#railtrack)
 - [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose)
 - [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold)

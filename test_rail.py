@@ -10,10 +10,10 @@ class TestIdentity(unittest.TestCase):
         self.assertEqual(value, rail.identity(value))
 
 
-class TestRaiseError(unittest.TestCase):
+class TestRaise(unittest.TestCase):
     def test_raises_error(self):
         with self.assertRaises(ValueError) as context:
-            rail.raise_error(ValueError('error'))
+            rail.RAISE(ValueError('error'))
         self.assertEqual('error', str(context.exception))
 
 
@@ -22,23 +22,23 @@ class TestIgnore(unittest.TestCase):
         self.assertIsNone(rail.ignore(mock.Mock()))
 
 
-class TestTryExcept(unittest.TestCase):
+class TestTry(unittest.TestCase):
     def test_no_error_raised(self):
         input = mock.Mock()
         expected_value = mock.Mock()
         func = mock.Mock(return_value=expected_value)
         handle = mock.Mock()
-        self.assertEqual(expected_value, rail.try_except(input, func, handle))
+        self.assertEqual(expected_value, rail.TRY(input, func, handle))
         func.assert_called_once_with(input)
         handle.assert_not_called()
 
     def test_error_raised(self):
         input = mock.Mock()
         error = rail.Error()
-        func = mock.Mock(side_effect=lambda _: rail.raise_error(error))
+        func = mock.Mock(side_effect=lambda _: rail.RAISE(error))
         output = mock.Mock()
         handle = mock.Mock(return_value=output)
-        self.assertEqual(output, rail.try_except(input, func, handle))
+        self.assertEqual(output, rail.TRY(input, func, handle))
         func.assert_called_once_with(input)
         handle.assert_called_once_with(error)
 
@@ -275,7 +275,7 @@ class TestCompose(unittest.TestCase):
     def test_compose_with_error(self):
         with self.assertRaises(rail.Error) as context:
             func = rail.compose(
-                lambda value: rail.raise_error(rail.Error('error'))
+                lambda value: rail.RAISE(rail.Error('error'))
             )
             func(mock.Mock())
         self.assertEqual('error', str(context.exception))
@@ -391,7 +391,7 @@ class TestTrack(unittest.TestCase):
     def test_fold_with_error(self):
         expected_error = rail.Error()
         func = rail.Track().compose(
-            lambda value: rail.raise_error(expected_error)
+            lambda value: rail.RAISE(expected_error)
         ).fold(
             lambda value: self.fail(),
             rail.identity
@@ -401,7 +401,7 @@ class TestTrack(unittest.TestCase):
     def test_handle_with_multiple_funcs(self):
         expected_error = rail.Error()
         func = rail.Track().compose(
-            lambda value: rail.raise_error(rail.Error())
+            lambda value: rail.RAISE(rail.Error())
         ).handle(
             lambda error: mock.Mock(),
             lambda error: expected_error
@@ -420,7 +420,7 @@ class TestTrack(unittest.TestCase):
     def test_handle_with_error(self):
         expected_error = rail.Error()
         func = rail.Track().compose(
-            lambda value: rail.raise_error(expected_error)
+            lambda value: rail.RAISE(expected_error)
         ).handle(
             lambda error: error
         )

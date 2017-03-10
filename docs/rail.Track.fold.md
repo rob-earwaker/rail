@@ -8,7 +8,7 @@ On execution of the [`rail.Track`](./rail.Track.md#railtrack), any [`rail.Error`
 >>> import rail
 >>>
 >>> func = rail.Track().compose(
-...     lambda value: value if len(value) > 4 else rail.raise_error(rail.Error())
+...     lambda value: value if len(value) > 4 else rail.RAISE(rail.Error())
 ... ).fold(
 ...     lambda value: 'greater',
 ...     lambda error: 'less'

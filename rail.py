@@ -7,7 +7,7 @@ def identity(value):
     return value
 
 
-def raise_error(error):
+def RAISE(error):
     raise error
 
 
@@ -15,7 +15,7 @@ def ignore(value):
     pass
 
 
-def try_except(value, func, handle):
+def TRY(value, func, handle):
     try:
         return func(value)
     except Exception as error:
@@ -195,12 +195,12 @@ class Track(object):
 
     def handle(self, *funcs):
         def handle_func(arg):
-            return try_except(
+            return TRY(
                 arg,
                 self.func,
                 match_type(
                     (Error, compose(*funcs)),
-                    (Exception, raise_error)
+                    (Exception, RAISE)
                 )
             )
         return Track(handle_func)

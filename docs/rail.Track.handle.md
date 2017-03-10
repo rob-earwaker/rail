@@ -8,7 +8,7 @@ On execution of the [`rail.Track`](./rail.Track.md#railtrack), any [`rail.Error`
 >>> import rail
 >>>
 >>> func = rail.Track().compose(
-...     lambda value: value if value < 10 else rail.raise_error(rail.Error('value must be < 10')),
+...     lambda value: value if value < 10 else rail.RAISE(rail.Error('value must be < 10')),
 ...     lambda value: value + 10
 ... ).handle(
 ...     lambda error: str(error),
@@ -27,7 +27,7 @@ Note that any non-[`rail.Error`](./rail.Error.md#railerror) exception raised dur
 
 ```python
 >>> func = rail.Track().compose(
-...     lambda value: rail.raise_error(ValueError(value))
+...     lambda value: rail.RAISE(ValueError(value))
 ... ).handle(
 ...     lambda error: 'Error handled successfully'
 ... )

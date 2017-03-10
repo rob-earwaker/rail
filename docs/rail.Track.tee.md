@@ -26,7 +26,7 @@ Errors raised by a function passed to the [`rail.Track.tee`](#railtracktee) meth
 ```python
 >>> basket = []
 >>> func = rail.Track().tee(
-...     lambda item: item if len(basket) < 2 else rail.raise_error(rail.Error('too many items')),
+...     lambda item: item if len(basket) < 2 else rail.RAISE(rail.Error('too many items')),
 ...     lambda item: basket.append(item)
 ... ).compose(
 ...     lambda item: 'Added {0} to basket'.format(item)
