@@ -17,12 +17,12 @@ ValueError: -4 is an invalid age!
 >>>
 ```
 
-The [`rail`](./rail.md#rail) package provides mechanisms for composing functions similar to the one above into a ROP-style track, with convenient error handling options for failure cases. As an example, the `validate_age` function can be composed using the [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose) function on a new [`rail.Track`](./rail.Track.md#railtrack) object created using the [`rail.Track.new`](./rail.Track.new.md#railtracknew) class method:
+The [`rail`](./rail.md#rail) package provides mechanisms for composing functions similar to the one above into a ROP-style track, with convenient error handling options for failure cases. As an example, the `validate_age` function can be composed using the [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose) function on a new [`rail.Track`](./rail.Track.md#railtrack) object:
 
 ```python
 >>> import rail
 >>>
->>> handle_age = rail.Track.new().compose(validate_age)
+>>> handle_age = rail.Track().compose(validate_age)
 >>> handle_age
 <rail.Track object at 0x...>
 >>>
@@ -54,7 +54,7 @@ In order to add error handling to our track, we need the `validate_age` function
 Note that by default a track has no error handling, even for a [`rail.Error`](./rail.Error.md#railerror) exception:
 
 ```python
->>> handle_age = rail.Track.new().compose(validate_age)
+>>> handle_age = rail.Track().compose(validate_age)
 >>> handle_age(-13)
 Traceback (most recent call last):
   ...
@@ -65,7 +65,7 @@ rail.Error: -13 is an invalid age!
 To add an error handling function onto a track, use the [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold) method. This must be called with two arguments, the first being a function to handle the success case and the second a function to handle the error case. When the track is executed, only one of these functions will be called based on whether a [`rail.Error`](./rail.Error.md#railerror) has been raised, and the track will continue to execute with the result of this function:
 
 ```python
->>> handle_age = rail.Track.new().compose(
+>>> handle_age = rail.Track().compose(
 ...     validate_age
 ... ).fold(
 ...     lambda value: '{0} is a valid age!'.format(value),
@@ -112,7 +112,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ...         raise NegativeAgeError(date)
 ...     return age
 ...
->>> millenium_age = rail.Track.new().compose(
+>>> millenium_age = rail.Track().compose(
 ...     lambda value: parse_date_of_birth(value),
 ...     lambda dob: calculate_age(datetime.date(2000, 1, 1), dob)
 ... ).fold(

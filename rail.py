@@ -181,15 +181,11 @@ def branch(*funcs):
 
 
 class Track(object):
-    def __init__(self, func):
+    def __init__(self, func=identity):
         self.func = func
 
     def __call__(self, arg):
         return self.func(arg)
-
-    @classmethod
-    def new(cls):
-        return Track(identity)
 
     def compose(self, *funcs):
         return Track(compose(self.func, *funcs))

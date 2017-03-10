@@ -346,11 +346,6 @@ class TestBranch(unittest.TestCase):
 
 
 class TestTrack(unittest.TestCase):
-    def test_new(self):
-        func = rail.Track.new()
-        value = mock.Mock()
-        self.assertEqual(value, func(value))
-
     def test_compose_with_existing_func(self):
         return_value1 = mock.Mock()
         return_value2 = mock.Mock()
@@ -358,7 +353,7 @@ class TestTrack(unittest.TestCase):
         func1 = mock.Mock(return_value=return_value1)
         func2 = mock.Mock(return_value=return_value2)
         func3 = mock.Mock(return_value=return_value3)
-        func = rail.Track.new().compose(
+        func = rail.Track().compose(
             func1
         ).compose(
             func2,
@@ -373,7 +368,7 @@ class TestTrack(unittest.TestCase):
     def test_tee_called_consecutively(self):
         func1 = mock.Mock()
         func2 = mock.Mock()
-        func = rail.Track.new().tee(
+        func = rail.Track().tee(
             func1
         ).tee(
             func2
@@ -385,7 +380,7 @@ class TestTrack(unittest.TestCase):
 
     def test_fold_with_no_error(self):
         expected_value = mock.Mock()
-        func = rail.Track.new().compose(
+        func = rail.Track().compose(
             lambda value: mock.Mock()
         ).fold(
             lambda value: expected_value,
@@ -395,7 +390,7 @@ class TestTrack(unittest.TestCase):
 
     def test_fold_with_error(self):
         expected_error = rail.Error()
-        func = rail.Track.new().compose(
+        func = rail.Track().compose(
             lambda value: rail.raise_error(expected_error)
         ).fold(
             lambda value: self.fail(),
@@ -405,7 +400,7 @@ class TestTrack(unittest.TestCase):
 
     def test_handle_with_multiple_funcs(self):
         expected_error = rail.Error()
-        func = rail.Track.new().compose(
+        func = rail.Track().compose(
             lambda value: rail.raise_error(rail.Error())
         ).handle(
             lambda error: mock.Mock(),
@@ -415,7 +410,7 @@ class TestTrack(unittest.TestCase):
 
     def test_handle_with_no_error(self):
         expected_value = mock.Mock()
-        func = rail.Track.new().compose(
+        func = rail.Track().compose(
             lambda value: expected_value
         ).handle(
             lambda error: self.fail()
@@ -424,7 +419,7 @@ class TestTrack(unittest.TestCase):
 
     def test_handle_with_error(self):
         expected_error = rail.Error()
-        func = rail.Track.new().compose(
+        func = rail.Track().compose(
             lambda value: rail.raise_error(expected_error)
         ).handle(
             lambda error: error

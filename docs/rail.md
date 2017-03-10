@@ -10,5 +10,4 @@
 - [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose)
 - [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold)
 - [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle)
-- [`rail.Track.new`](./rail.Track.new.md#railtracknew)
 - [`rail.Track.tee`](./rail.Track.tee.md#railtracktee)

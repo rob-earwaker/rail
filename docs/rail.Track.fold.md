@@ -4,12 +4,10 @@ The [`rail.Track.fold`](#railtrackfold) method allows for convergence of the suc
 
 On execution of the [`rail.Track`](./rail.Track.md#railtrack), any [`rail.Error`](./rail.Error.md#railerror) exception thrown by a function composed prior to the [`rail.Track.fold`](#railtrackfold) method call will be caught and passed to the error function. If no [`rail.Error`](./rail.Error.md#railerror) exception is thrown, the success function will be called with the return value of the last function in the composition prior to the [`rail.Track.fold`](#railtrackfold) method call. The [`rail.Track`](./rail.Track.md#railtrack) execution will then continue with the return value of either the success or error function. For this reason, it is recommended that the return values of the success and error functions are of the same type.
 
-In the example below, the [`rail.Track.new`](./rail.Track.new.md#railtracknew) class method is used to create a new [`rail.Track`](./rail.Track.md#railtrack) object and the [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose) method is used to create the function compositions both before and after the [`rail.Track.fold`](#railtrackfold) method call. The [`rail.raise_error`](./rail.raise_error.md#railraise_error) function is also used to raise a [`rail.Error`](./rail.Error.md#railerror) from within the composed lambda function.
-
 ```python
 >>> import rail
 >>>
->>> func = rail.Track.new().compose(
+>>> func = rail.Track().compose(
 ...     lambda value: value if len(value) > 4 else rail.raise_error(rail.Error())
 ... ).fold(
 ...     lambda value: 'greater',
