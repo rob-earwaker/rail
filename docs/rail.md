@@ -3,6 +3,7 @@
 - [Concept](./Concept.md#concept)
 - [`rail.compose`](./rail.compose.md#railcompose)
 - [`rail.identity`](./rail.identity.md#railidentity)
+- [`rail.match`](./rail.match.md#railmatch)
 - [`rail.pipe`](./rail.pipe.md#railpipe)
 - [`rail.RAISE`](./rail.RAISE.md#railraise)
 - [`rail.tee`](./rail.tee.md#railtee)
@@ -11,3 +12,4 @@
 - [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold)
 - [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle)
 - [`rail.Track.tee`](./rail.Track.tee.md#railtracktee)
+- [`rail.UnmatchedValueError`](./rail.UnmatchedValueError.md#railunmatchedvalueerror)
