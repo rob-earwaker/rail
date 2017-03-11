@@ -14,10 +14,6 @@ def RAISE(exception=None):
         raise exception
 
 
-def ignore(value):
-    pass
-
-
 def TRY(value, func, handle):
     try:
         return func(value)

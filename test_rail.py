@@ -53,11 +53,6 @@ class TestRaise(unittest.TestCase):
         self.assertEqual(expected_tb, actual_tb[-len(expected_tb):])
 
 
-class TestIgnore(unittest.TestCase):
-    def test_ignores_input_value(self):
-        self.assertIsNone(rail.ignore(unittest.mock.Mock()))
-
-
 class TestTry(unittest.TestCase):
     def test_no_exception_raised(self):
         input = unittest.mock.Mock()
@@ -70,7 +65,7 @@ class TestTry(unittest.TestCase):
 
     def test_exception_raised(self):
         input = unittest.mock.Mock()
-        exception = ValueError()
+        exception = ValueError('value')
         func = unittest.mock.Mock(side_effect=lambda _: rail.RAISE(exception))
         output = unittest.mock.Mock()
         handle = unittest.mock.Mock(return_value=output)
@@ -463,9 +458,9 @@ class TestTrack(unittest.TestCase):
         self.assertEqual(expected_tb, actual_tb[-len(expected_tb):])
 
     def test_handle_with_multiple_funcs(self):
-        expected_exception = ValueError()
+        expected_exception = ValueError('value')
         func = rail.Track().compose(
-            lambda value: rail.RAISE(ValueError())
+            lambda value: rail.RAISE(ValueError('value'))
         ).handle(
             lambda exception: unittest.mock.Mock(),
             lambda exception: expected_exception
