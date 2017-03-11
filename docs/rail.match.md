@@ -18,6 +18,7 @@ The [`rail.match`](#railmatch) function provides an expressive way to map a valu
 >>> func(0)
 'value is zero'
 >>>
+```
 
 Note that since the match statements are checked in order, only the first match will be used even if multiple statements match the input value:
 
