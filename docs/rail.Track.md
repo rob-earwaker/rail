@@ -23,7 +23,7 @@ The returned object is equivalent to the [`rail.identity`](./rail.identity.md#ra
 >>>
 ```
 
-The following methods are available on a [`rail.Track`](./rail.Track.md#railtrack) object:
+The following methods are available on a [`rail.Track`](./rail.Track.md#railtrack) object, all of which return a new [`rail.Track`](./rail.Track.md#railtrack) object:
 
 - [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose) - composes additional functions onto the wrapped function
 - [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold) - maps the success or exception value of the wrapped function into a new value
