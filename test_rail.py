@@ -13,17 +13,17 @@ class TestIdentity(unittest.TestCase):
 
 
 class TestRaise(unittest.TestCase):
-    def test_raises_error(self):
+    def test_raises_exception(self):
         with self.assertRaises(ValueError) as context:
-            rail.RAISE(ValueError('error'))
-        self.assertEqual('error', str(context.exception))
+            rail.RAISE(ValueError('exception'))
+        self.assertEqual('exception', str(context.exception))
 
     def test_preserves_traceback_when_reraising_without_exception(self):
-        def func(error):
-            raise error
+        def func(exception):
+            raise exception
         try:
             try:
-                func(ValueError('error'))
+                func(ValueError('exception'))
             except ValueError:
                 expected_exc_info = sys.exc_info()
                 rail.RAISE()
@@ -36,14 +36,14 @@ class TestRaise(unittest.TestCase):
         self.assertEqual(expected_tb, actual_tb[-len(expected_tb):])
 
     def test_preserves_traceback_when_reraising_with_exception(self):
-        def func(error):
-            raise error
+        def func(exception):
+            raise exception
         try:
             try:
-                func(ValueError('error'))
-            except ValueError as error:
+                func(ValueError('exception'))
+            except ValueError as exception:
                 expected_exc_info = sys.exc_info()
-                rail.RAISE(error)
+                rail.RAISE(exception)
         except ValueError:
             actual_exc_info = sys.exc_info()
         self.assertEqual(expected_exc_info[0], actual_exc_info[0])
@@ -59,7 +59,7 @@ class TestIgnore(unittest.TestCase):
 
 
 class TestTry(unittest.TestCase):
-    def test_no_error_raised(self):
+    def test_no_exception_raised(self):
         input = unittest.mock.Mock()
         expected_value = unittest.mock.Mock()
         func = unittest.mock.Mock(return_value=expected_value)
@@ -68,15 +68,15 @@ class TestTry(unittest.TestCase):
         func.assert_called_once_with(input)
         handle.assert_not_called()
 
-    def test_error_raised(self):
+    def test_exception_raised(self):
         input = unittest.mock.Mock()
-        error = rail.Error()
-        func = unittest.mock.Mock(side_effect=lambda _: rail.RAISE(error))
+        exception = ValueError()
+        func = unittest.mock.Mock(side_effect=lambda _: rail.RAISE(exception))
         output = unittest.mock.Mock()
         handle = unittest.mock.Mock(return_value=output)
         self.assertEqual(output, rail.TRY(input, func, handle))
         func.assert_called_once_with(input)
-        handle.assert_called_once_with(error)
+        handle.assert_called_once_with(exception)
 
 
 class TestMatch(unittest.TestCase):
@@ -301,20 +301,20 @@ class TestCompose(unittest.TestCase):
         value = unittest.mock.Mock()
         self.assertEqual(value, func(value))
 
-    def test_compose_with_no_error(self):
+    def test_compose_with_no_exception(self):
         expected_value = unittest.mock.Mock()
         func = rail.compose(
             lambda value: expected_value
         )
         self.assertEqual(expected_value, func(unittest.mock.Mock()))
 
-    def test_compose_with_error(self):
-        with self.assertRaises(rail.Error) as context:
+    def test_compose_with_exception(self):
+        with self.assertRaises(ValueError) as context:
             func = rail.compose(
-                lambda value: rail.RAISE(rail.Error('error'))
+                lambda value: rail.RAISE(ValueError('exception'))
             )
             func(unittest.mock.Mock())
-        self.assertEqual('error', str(context.exception))
+        self.assertEqual('exception', str(context.exception))
 
     def test_compose_with_multiple_funcs(self):
         return_value1 = unittest.mock.Mock()
@@ -414,41 +414,30 @@ class TestTrack(unittest.TestCase):
         func1.assert_called_once_with(value)
         func2.assert_called_once_with(value)
 
-    def test_fold_with_no_error(self):
+    def test_fold_with_no_exception(self):
         expected_value = unittest.mock.Mock()
         func = rail.Track().compose(
             lambda value: unittest.mock.Mock()
         ).fold(
             lambda value: expected_value,
-            lambda error: self.fail()
+            lambda exception: self.fail()
         )
         self.assertEqual(expected_value, func(unittest.mock.Mock()))
 
-    def test_fold_with_error(self):
-        expected_error = rail.Error()
-        func = rail.Track().compose(
-            lambda value: rail.RAISE(expected_error)
-        ).fold(
-            lambda value: self.fail(),
-            rail.identity
-        )
-        self.assertEqual(expected_error, func(unittest.mock.Mock()))
-
-    def test_fold_with_standard_exception(self):
+    def test_fold_with_exception(self):
         expected_exception = KeyError('key')
-        with self.assertRaises(KeyError) as context:
-            rail.pipe(
-                unittest.mock.Mock(),
-                rail.Track().compose(
-                    lambda _: rail.RAISE(expected_exception)
-                ).fold(
-                    lambda _: self.fail(),
-                    lambda _: self.fail()
-                )
+        actual_exception = rail.pipe(
+            unittest.mock.Mock(),
+            rail.Track().compose(
+                lambda _: rail.RAISE(expected_exception)
+            ).fold(
+                lambda _: self.fail(),
+                rail.identity
             )
-        self.assertEqual(expected_exception, context.exception)
+        )
+        self.assertEqual(expected_exception, actual_exception)
 
-    def test_fold_traceback_with_standard_exception(self):
+    def test_fold_traceback_with_exception(self):
         exception = KeyError('key')
         func = rail.Track().compose(
             lambda _: rail.RAISE(exception)
@@ -462,7 +451,7 @@ class TestTrack(unittest.TestCase):
                 unittest.mock.Mock(),
                 func.fold(
                     lambda _: self.fail(),
-                    lambda _: self.fail()
+                    rail.RAISE
                 )
             )
         except KeyError:
@@ -474,47 +463,37 @@ class TestTrack(unittest.TestCase):
         self.assertEqual(expected_tb, actual_tb[-len(expected_tb):])
 
     def test_handle_with_multiple_funcs(self):
-        expected_error = rail.Error()
+        expected_exception = ValueError()
         func = rail.Track().compose(
-            lambda value: rail.RAISE(rail.Error())
+            lambda value: rail.RAISE(ValueError())
         ).handle(
-            lambda error: unittest.mock.Mock(),
-            lambda error: expected_error
+            lambda exception: unittest.mock.Mock(),
+            lambda exception: expected_exception
         )
-        self.assertEqual(expected_error, func(unittest.mock.Mock()))
+        self.assertEqual(expected_exception, func(unittest.mock.Mock()))
 
-    def test_handle_with_no_error(self):
+    def test_handle_with_no_exception(self):
         expected_value = unittest.mock.Mock()
         func = rail.Track().compose(
             lambda value: expected_value
         ).handle(
-            lambda error: self.fail()
+            lambda exception: self.fail()
         )
         self.assertEqual(expected_value, func(unittest.mock.Mock()))
 
-    def test_handle_with_error(self):
-        expected_error = rail.Error()
-        func = rail.Track().compose(
-            lambda value: rail.RAISE(expected_error)
-        ).handle(
-            lambda error: error
-        )
-        self.assertEqual(expected_error, func(unittest.mock.Mock()))
-
-    def test_handle_with_standard_exception(self):
+    def test_handle_with_exception(self):
         expected_exception = KeyError('key')
-        with self.assertRaises(KeyError) as context:
-            rail.pipe(
-                unittest.mock.Mock(),
-                rail.Track().compose(
-                    lambda _: rail.RAISE(expected_exception)
-                ).handle(
-                    lambda _: self.fail()
-                )
+        actual_exception = rail.pipe(
+            unittest.mock.Mock(),
+            rail.Track().compose(
+                lambda _: rail.RAISE(expected_exception)
+            ).handle(
+                rail.identity
             )
-        self.assertEqual(expected_exception, context.exception)
+        )
+        self.assertEqual(expected_exception, actual_exception)
 
-    def test_handle_traceback_with_standard_exception(self):
+    def test_handle_traceback_with_exception(self):
         exception = KeyError('key')
         func = rail.Track().compose(
             lambda _: rail.RAISE(exception)
@@ -527,7 +506,7 @@ class TestTrack(unittest.TestCase):
             rail.pipe(
                 unittest.mock.Mock(),
                 func.handle(
-                    lambda _: self.fail()
+                    rail.RAISE
                 )
             )
         except KeyError:

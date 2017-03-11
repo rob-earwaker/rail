@@ -50,7 +50,7 @@ ValueError: 8
 >>>
 >>> rail.pipe(
 ...     'something went wrong',
-...     rail.Error,
+...     ValueError,
 ...     raise
 Traceback (most recent call last):
   ...
@@ -58,11 +58,11 @@ SyntaxError: invalid syntax
 >>>
 >>> rail.pipe(
 ...     'something went wrong',
-...     rail.Error,
+...     ValueError,
 ...     rail.RAISE
 ... )
 Traceback (most recent call last):
   ...
-rail.Error: something went wrong
+ValueError: something went wrong
 >>>
 ```

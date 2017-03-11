@@ -2,7 +2,6 @@
 
 - [Concept](./Concept.md#concept)
 - [`rail.compose`](./rail.compose.md#railcompose)
-- [`rail.Error`](./rail.Error.md#railerror)
 - [`rail.identity`](./rail.identity.md#railidentity)
 - [`rail.pipe`](./rail.pipe.md#railpipe)
 - [`rail.RAISE`](./rail.RAISE.md#railraise)

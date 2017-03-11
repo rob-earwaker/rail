@@ -7,11 +7,11 @@ def identity(value):
     return value
 
 
-def RAISE(error=None):
-    if error is None:
+def RAISE(exception=None):
+    if exception is None:
         raise
     else:
-        raise error
+        raise exception
 
 
 def ignore(value):
@@ -21,15 +21,11 @@ def ignore(value):
 def TRY(value, func, handle):
     try:
         return func(value)
-    except Exception as error:
-        return handle(error)
+    except Exception as exception:
+        return handle(exception)
 
 
-class Error(Exception):
-    pass
-
-
-class UnmatchedValueError(Error):
+class UnmatchedValueError(Exception):
     def __init__(self, value):
         self.value = value
         super().__init__(str(value))
@@ -41,7 +37,7 @@ def match(*args):
             if is_match(value):
                 return map_func
         raise UnmatchedValueError(value)
-    return lambda error: get_map_func(error)(error)
+    return lambda value: get_map_func(value)(value)
 
 
 def match_type(*args):
@@ -201,10 +197,7 @@ class Track(object):
             return TRY(
                 arg,
                 self.func,
-                match_type(
-                    (Error, compose(*funcs)),
-                    (Exception, RAISE)
-                )
+                compose(*funcs)
             )
         return Track(handle_func)
 

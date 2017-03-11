@@ -26,6 +26,6 @@ The returned object is equivalent to the [`rail.identity`](./rail.identity.md#ra
 The following methods are available on a [`rail.Track`](./rail.Track.md#railtrack) object:
 
 - [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose) - composes additional functions onto the wrapped function
-- [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold) - maps the success or error value of the wrapped function into a new value
-- [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle) - maps an error that occurred during execution of the wrapped function into a new value
+- [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold) - maps the success or exception value of the wrapped function into a new value
+- [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle) - maps an exception that occurred during execution of the wrapped function into a new value
 - [`rail.Track.tee`](./rail.Track.tee.md#railtracktee) - creates a new dead-end branch off the wrapped function

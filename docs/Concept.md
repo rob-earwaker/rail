@@ -1,6 +1,6 @@
 ## Concept
 
-The key idea of ROP is that during execution you can either be on the success track or on the failure track. In other languages, this concept is usually encapsulated by an `Either` type (or similar) that represents either a success or failure, requiring that functions return an instance of `Either` containing either a success value or a failure value. In Python, a more standard way of dealing with failures is to simply raise an exception and leave it to some function higher up the call stack to deal with the error in whatever way is appropriate:
+The key idea of ROP is that during execution you can either be on the success track or on the failure track. In other languages, this concept is usually encapsulated by an `Either` type (or similar) that represents either a success or failure, requiring that functions return an instance of `Either` containing either a success value or a failure value. In Python, a more standard way of dealing with failures is to simply raise an exception and leave it to some function higher up the call stack to deal with in whatever way is appropriate:
 
 ```python
 >>> def validate_age(age):
@@ -17,7 +17,7 @@ ValueError: -4 is an invalid age!
 >>>
 ```
 
-The [`rail`](./rail.md#rail) package provides mechanisms for composing functions similar to the one above into a ROP-style track, with convenient error handling options for failure cases. As an example, the `validate_age` function can be composed using the [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose) function on a new [`rail.Track`](./rail.Track.md#railtrack) object:
+The [`rail`](./rail.md#rail) package provides mechanisms for composing functions similar to the one above into a ROP-style track, with convenient exception handling options for failure cases. As an example, the `validate_age` function can be composed using the [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose) function on a new [`rail.Track`](./rail.Track.md#railtrack) object:
 
 ```python
 >>> import rail
@@ -40,36 +40,14 @@ ValueError: -22 is an invalid age!
 >>>
 ```
 
-In order to add error handling to our track, we need the `validate_age` function to throw an exception that the [`rail.Track`](./rail.Track.md#railtrack) object will recognise. The [`rail`](./rail.md#rail) package defines a custom [`rail.Error`](./rail.Error.md#railerror) exception for this purpose.
-
-```python
->>> def validate_age(age):
-...     if age < 0:
-...         raise rail.Error('{0} is an invalid age!'.format(age))
-...     return age
-...
->>>
-```
-
-Note that by default a track has no error handling, even for a [`rail.Error`](./rail.Error.md#railerror) exception:
-
-```python
->>> handle_age = rail.Track().compose(validate_age)
->>> handle_age(-13)
-Traceback (most recent call last):
-  ...
-rail.Error: -13 is an invalid age!
->>>
-```
-
-To add an error handling function onto a track, use the [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold) method. This must be called with two arguments, the first being a function to handle the success case and the second a function to handle the error case. When the track is executed, only one of these functions will be called based on whether a [`rail.Error`](./rail.Error.md#railerror) has been raised, and the track will continue to execute with the result of this function:
+To add an exception handling function onto a track, use the [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle) method. This must be called with a single argument, which is a function that accepts a single argument. When the track is executed, any `Exception` raised during execution will be caught and passed to this function, and the track will continue to execute with the return value:
 
 ```python
 >>> handle_age = rail.Track().compose(
-...     validate_age
-... ).fold(
-...     lambda value: '{0} is a valid age!'.format(value),
-...     lambda error: str(error)
+...     validate_age,
+...     lambda value: '{0} is a valid age!'.format(value)
+... ).handle(
+...     lambda exception: str(exception)
 ... )
 >>> handle_age(65)
 '65 is a valid age!'
@@ -86,7 +64,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 >>>
 >>> import rail
 >>>
->>> class DateOfBirthParsingError(rail.Error):
+>>> class DateOfBirthParsingError(Exception):
 ...     def __init__(self, value):
 ...         message = '{0} is an invalid date of birth'.format(value)
 ...         super(DateOfBirthParsingError, self).__init__(message)
@@ -101,7 +79,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ...     day = int(match.group(3))
 ...     return datetime.date(year, month, day)
 ...
->>> class NegativeAgeError(rail.Error):
+>>> class NegativeAgeError(Exception):
 ...     def __init__(self, date):
 ...         message = 'Date of birth is before {0}'.format(date)
 ...         super(NegativeAgeError, self).__init__(message)
@@ -114,10 +92,10 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ...
 >>> millenium_age = rail.Track().compose(
 ...     lambda value: parse_date_of_birth(value),
-...     lambda dob: calculate_age(datetime.date(2000, 1, 1), dob)
-... ).fold(
-...     lambda age: 'Age on 1st Jan 2000 was {0} days'.format(age.days),
-...     lambda error: 'ERROR: {0}'.format(error)
+...     lambda dob: calculate_age(datetime.date(2000, 1, 1), dob),
+...     lambda age: 'Age on 1st Jan 2000 was {0} days'.format(age.days)
+... ).handle(
+...     lambda exception: 'ERROR: {0}'.format(exception)
 ... ).compose(
 ...     lambda value: '{0}!!!'.format(value)
 ... )
