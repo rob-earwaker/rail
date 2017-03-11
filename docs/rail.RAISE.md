@@ -18,9 +18,14 @@ TypeError: exceptions must derive from BaseException
 >>>
 ```
 
-The advantage of the [`rail.RAISE`](#railraise) function over the `raise` keyword is that it can be used in places where a `raise` statement would not be possible, e.g. in a `lambda` or in a function composition chain:
+The advantage of the [`rail.RAISE`](#railraise) function over the `raise` keyword is that it can be used in places where a `raise` statement would result in a `SyntaxError`, e.g. in a `lambda` or a function call:
 
 ```python
+>>> validate = lambda value: value if value > 10 else raise ValueError(value)
+Traceback (most recent call last):
+  ...
+SyntaxError: invalid syntax
+>>>
 >>> validate = lambda value: value if value > 10 else rail.RAISE(ValueError(value))
 >>> validate(13)
 13
@@ -28,6 +33,14 @@ The advantage of the [`rail.RAISE`](#railraise) function over the `raise` keywor
 Traceback (most recent call last):
   ...
 ValueError: 8
+>>>
+>>> rail.pipe(
+...     'something went wrong',
+...     rail.Error,
+...     raise
+Traceback (most recent call last):
+  ...
+SyntaxError: invalid syntax
 >>>
 >>> rail.pipe(
 ...     'something went wrong',
