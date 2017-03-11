@@ -1,8 +1,6 @@
 import copy
 import functools
 import inspect
-import six
-import sys
 
 
 def identity(value):
@@ -11,7 +9,7 @@ def identity(value):
 
 def RAISE(error=None):
     if error is None:
-        six.reraise(*sys.exc_info())
+        raise
     else:
         raise error
 
@@ -34,7 +32,7 @@ class Error(Exception):
 class UnmatchedValueError(Error):
     def __init__(self, value):
         self.value = value
-        super(Error, self).__init__(str(value))
+        super().__init__(str(value))
 
 
 def match(*args):

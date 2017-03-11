@@ -21,20 +21,13 @@ TypeError: exceptions must derive from BaseException
 When called with no arguments, the exception in the current context will be re-raised, preserving the original traceback:
 
 ```python
->>> def func():
-...     raise ValueError('value')
-...
 >>> try:
-...     func()
+...     raise ValueError('value')
 ... except ValueError:
 ...     rail.RAISE()
 ...
 Traceback (most recent call last):
   ...
-  File "...", line 2, in <module>
-    func()
-  File "...", line 2, in func
-    raise ValueError('value')
 ValueError: value
 >>>
 ```

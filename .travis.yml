@@ -1,14 +1,13 @@
 language: python
 python:
-  - 2.7
+  - 3.4
+  - 3.5
   - 3.6
-install:
-  - pip install six
 script:
-  - pip install nose mock coverage
+  - pip install nose coverage
   - nosetests ./ ./docs
     --with-coverage --cover-package=rail --cover-html --cover-erase
-    --with-doctest --doctest-extension=md --doctest-options=+ELLIPSIS,+IGNORE_EXCEPTION_DETAIL
+    --with-doctest --doctest-extension=md --doctest-options=+ELLIPSIS
   - pip install pycodestyle
   - pycodestyle ./ --show-source --select=E,W
 after_success:
