@@ -18,7 +18,7 @@ class TestRaise(unittest.TestCase):
             rail.RAISE(ValueError('error'))
         self.assertEqual('error', str(context.exception))
 
-    def test_raises_existing_error(self):
+    def test_preserves_traceback_when_reraising_without_exception(self):
         def func(error):
             raise error
         try:
@@ -27,6 +27,23 @@ class TestRaise(unittest.TestCase):
             except ValueError:
                 expected_exc_info = sys.exc_info()
                 rail.RAISE()
+        except ValueError:
+            actual_exc_info = sys.exc_info()
+        self.assertEqual(expected_exc_info[0], actual_exc_info[0])
+        self.assertEqual(expected_exc_info[1], actual_exc_info[1])
+        expected_tb = traceback.format_tb(expected_exc_info[2])
+        actual_tb = traceback.format_tb(actual_exc_info[2])
+        self.assertEqual(expected_tb, actual_tb[-len(expected_tb):])
+
+    def test_preserves_traceback_when_reraising_with_exception(self):
+        def func(error):
+            raise error
+        try:
+            try:
+                func(ValueError('error'))
+            except ValueError as error:
+                expected_exc_info = sys.exc_info()
+                rail.RAISE(error)
         except ValueError:
             actual_exc_info = sys.exc_info()
         self.assertEqual(expected_exc_info[0], actual_exc_info[0])
@@ -417,6 +434,45 @@ class TestTrack(unittest.TestCase):
         )
         self.assertEqual(expected_error, func(unittest.mock.Mock()))
 
+    def test_fold_with_standard_exception(self):
+        expected_exception = KeyError('key')
+        with self.assertRaises(KeyError) as context:
+            rail.pipe(
+                unittest.mock.Mock(),
+                rail.Track().compose(
+                    lambda _: rail.RAISE(expected_exception)
+                ).fold(
+                    lambda _: self.fail(),
+                    lambda _: self.fail()
+                )
+            )
+        self.assertEqual(expected_exception, context.exception)
+
+    def test_fold_traceback_with_standard_exception(self):
+        exception = KeyError('key')
+        func = rail.Track().compose(
+            lambda _: rail.RAISE(exception)
+        )
+        try:
+            func(unittest.mock.Mock())
+        except KeyError:
+            expected_exc_info = sys.exc_info()
+        try:
+            rail.pipe(
+                unittest.mock.Mock(),
+                func.fold(
+                    lambda _: self.fail(),
+                    lambda _: self.fail()
+                )
+            )
+        except KeyError:
+            actual_exc_info = sys.exc_info()
+        self.assertEqual(expected_exc_info[0], actual_exc_info[0])
+        self.assertEqual(expected_exc_info[1], actual_exc_info[1])
+        expected_tb = traceback.format_tb(expected_exc_info[2])
+        actual_tb = traceback.format_tb(actual_exc_info[2])
+        self.assertEqual(expected_tb, actual_tb[-len(expected_tb):])
+
     def test_handle_with_multiple_funcs(self):
         expected_error = rail.Error()
         func = rail.Track().compose(
@@ -444,6 +500,43 @@ class TestTrack(unittest.TestCase):
             lambda error: error
         )
         self.assertEqual(expected_error, func(unittest.mock.Mock()))
+
+    def test_handle_with_standard_exception(self):
+        expected_exception = KeyError('key')
+        with self.assertRaises(KeyError) as context:
+            rail.pipe(
+                unittest.mock.Mock(),
+                rail.Track().compose(
+                    lambda _: rail.RAISE(expected_exception)
+                ).handle(
+                    lambda _: self.fail()
+                )
+            )
+        self.assertEqual(expected_exception, context.exception)
+
+    def test_handle_traceback_with_standard_exception(self):
+        exception = KeyError('key')
+        func = rail.Track().compose(
+            lambda _: rail.RAISE(exception)
+        )
+        try:
+            func(unittest.mock.Mock())
+        except KeyError:
+            expected_exc_info = sys.exc_info()
+        try:
+            rail.pipe(
+                unittest.mock.Mock(),
+                func.handle(
+                    lambda _: self.fail()
+                )
+            )
+        except KeyError:
+            actual_exc_info = sys.exc_info()
+        self.assertEqual(expected_exc_info[0], actual_exc_info[0])
+        self.assertEqual(expected_exc_info[1], actual_exc_info[1])
+        expected_tb = traceback.format_tb(expected_exc_info[2])
+        actual_tb = traceback.format_tb(actual_exc_info[2])
+        self.assertEqual(expected_tb, actual_tb[-len(expected_tb):])
 
 
 if __name__ == '__main__':

@@ -18,7 +18,7 @@ TypeError: exceptions must derive from BaseException
 >>>
 ```
 
-When called with no arguments, the exception in the current context will be re-raised, preserving the original traceback:
+When called with no arguments, the exception in the current context will be re-raised:
 
 ```python
 >>> try:
