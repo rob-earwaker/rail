@@ -4,6 +4,7 @@
 - [`rail.compose`](./rail.compose.md#railcompose)
 - [`rail.identity`](./rail.identity.md#railidentity)
 - [`rail.match`](./rail.match.md#railmatch)
+- [`rail.match_type`](./rail.match_type.md#railmatch_type)
 - [`rail.pipe`](./rail.pipe.md#railpipe)
 - [`rail.RAISE`](./rail.RAISE.md#railraise)
 - [`rail.tee`](./rail.tee.md#railtee)
