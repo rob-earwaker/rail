@@ -330,7 +330,7 @@ class TestPipe(unittest.TestCase):
         )
 
 
-class TestBranch(unittest.TestCase):
+class TestTee(unittest.TestCase):
     def test_with_multiple_funcs(self):
         input = mock.Mock()
         func1 = mock.Mock(return_value=mock.Mock())
@@ -338,7 +338,7 @@ class TestBranch(unittest.TestCase):
         func3 = mock.Mock()
         self.assertEqual(
             input,
-            rail.pipe(input, rail.branch(func1, func2, func3))
+            rail.pipe(input, rail.tee(func1, func2, func3))
         )
         func1.assert_called_once_with(input)
         func2.assert_called_once_with(func1.return_value)

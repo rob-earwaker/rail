@@ -172,7 +172,7 @@ def pipe(value, *funcs):
     return func(value)
 
 
-def branch(*funcs):
+def tee(*funcs):
     return lambda arg: pipe(
         arg,
         compose(*funcs),
@@ -206,4 +206,4 @@ class Track(object):
         return Track(handle_func)
 
     def tee(self, *funcs):
-        return self.compose(branch(*funcs))
+        return self.compose(tee(*funcs))
