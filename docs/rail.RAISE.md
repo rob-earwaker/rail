@@ -1,6 +1,6 @@
 ## `rail.RAISE`
 
-The [`rail.RAISE`](#railraise) function is a functional equivalent of the `raise` keyword. It accepts a single argument, which it will attempt to raise as an exception:
+The [`rail.RAISE`](#railraise) function is a functional equivalent of the `raise` keyword and can be called with either one argument or no arguments. When called with one argument, the `raise` keyword will be used on the value provided:
 
 ```python
 >>> import rail
@@ -15,6 +15,27 @@ KeyError: 'key'
 Traceback (most recent call last):
   ...
 TypeError: exceptions must derive from BaseException
+>>>
+```
+
+When called with no arguments, the exception in the current context will be re-raised, preserving the original traceback:
+
+```python
+>>> def func():
+...     raise ValueError('value')
+...
+>>> try:
+...     func()
+... except ValueError:
+...     rail.RAISE()
+...
+Traceback (most recent call last):
+  ...
+  File "...", line 2, in <module>
+    func()
+  File "...", line 2, in func
+    raise ValueError('value')
+ValueError: value
 >>>
 ```
 

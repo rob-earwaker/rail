@@ -1,4 +1,6 @@
 import mock
+import sys
+import traceback
 import unittest
 
 import rail
@@ -15,6 +17,23 @@ class TestRaise(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             rail.RAISE(ValueError('error'))
         self.assertEqual('error', str(context.exception))
+
+    def test_raises_existing_error(self):
+        def func(error):
+            raise error
+        try:
+            try:
+                func(ValueError('error'))
+            except ValueError:
+                expected_exc_info = sys.exc_info()
+                rail.RAISE()
+        except ValueError:
+            actual_exc_info = sys.exc_info()
+        self.assertEqual(expected_exc_info[0], actual_exc_info[0])
+        self.assertEqual(expected_exc_info[1], actual_exc_info[1])
+        expected_tb = traceback.format_tb(expected_exc_info[2])
+        actual_tb = traceback.format_tb(actual_exc_info[2])
+        self.assertEqual(expected_tb, actual_tb[-len(expected_tb):])
 
 
 class TestIgnore(unittest.TestCase):

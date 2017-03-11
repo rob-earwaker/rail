@@ -1,14 +1,19 @@
 import copy
 import functools
 import inspect
+import six
+import sys
 
 
 def identity(value):
     return value
 
 
-def RAISE(error):
-    raise error
+def RAISE(error=None):
+    if error is None:
+        six.reraise(*sys.exc_info())
+    else:
+        raise error
 
 
 def ignore(value):
