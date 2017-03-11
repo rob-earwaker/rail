@@ -6,6 +6,7 @@
 - [`rail.identity`](./rail.identity.md#railidentity)
 - [`rail.pipe`](./rail.pipe.md#railpipe)
 - [`rail.RAISE`](./rail.RAISE.md#railraise)
+- [`rail.tee`](./rail.tee.md#railtee)
 - [`rail.Track`](./rail.Track.md#railtrack)
 - [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose)
 - [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold)

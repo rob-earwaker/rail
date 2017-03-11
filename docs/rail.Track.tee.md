@@ -43,3 +43,5 @@ rail.Error: too many items
 ['pear', 'melon']
 >>>
 ```
+
+Note that the [`rail.Track.tee`](#railtracktee) method is equivalent to calling [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose) with the [`rail.tee`](./rail.tee.md#railtee) function, i.e. `rail.Track.tee(*funcs)` is equivalent to `rail.Track.compose(rail.tee(*funcs))`.
