@@ -17,6 +17,8 @@ The [`rail.match_type`](#railmatch_type) function is a convenience function to a
 >>>
 ```
 
+> TIP: The [`rail.match_type`](#railmatch_type) function is particularly useful is when handling exceptions using the [`rail.TRY`](./rail.TRY.md#railtry) function or the [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle) and [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold) methods.
+
 As with the [`rail.match`](./rail.match.md#railmatch) function, any unmatched values will result in an [`rail.UnmatchedValueError`](./rail.UnmatchedValueError.md#railunmatchedvalueerror) exception being raised. To prevent this, add a default match statement:
 
 ```python
@@ -28,30 +30,5 @@ As with the [`rail.match`](./rail.match.md#railmatch) function, any unmatched va
 >>>
 >>> func({})
 '{} has an unknown type'
->>>
-```
-
-One scenario where the [`rail.match_type`](#railmatch_type) function is particularly useful is when handling exceptions using the [`rail.TRY`](./rail.TRY.md#railtry) function or the [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle) and [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold) methods:
-
-```python
->>> func = rail.Track().compose(
-...     rail.RAISE
-... ).handle(
-...     rail.match_type(
-...         (ValueError, lambda _: 'value error handled'),
-...         (KeyError, lambda _: 'key error handled'),
-...         (Exception, lambda _: rail.RAISE())
-...     )
-... )
->>>
->>> func(ValueError)
-'value error handled'
->>> func(KeyError)
-'key error handled'
->>>
->>> func(TypeError('invalid type'))
-Traceback (most recent call last):
-  ...
-TypeError: invalid type
 >>>
 ```
