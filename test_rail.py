@@ -417,6 +417,14 @@ class TestNe(unittest.TestCase):
         self.assertFalse(rail.pipe(value, rail.ne(value)))
 
 
+class TestGt(unittest.TestCase):
+    def test_pipe_returns_true(self):
+        self.assertTrue(rail.pipe(4, rail.gt(0)))
+
+    def test_pipe_returns_false(self):
+        self.assertFalse(rail.pipe(13, rail.gt(15)))
+
+
 class TestTrack(unittest.TestCase):
     def test_compose_with_existing_func(self):
         return_value1 = unittest.mock.Mock()

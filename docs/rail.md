@@ -3,6 +3,7 @@
 - [Concept](./Concept.md#concept)
 - [`rail.compose`](./rail.compose.md#railcompose)
 - [`rail.eq`](./rail.eq.md#raileq)
+- [`rail.gt`](./rail.gt.md#railgt)
 - [`rail.identity`](./rail.identity.md#railidentity)
 - [`rail.lt`](./rail.lt.md#raillt)
 - [`rail.match`](./rail.match.md#railmatch)
