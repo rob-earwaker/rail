@@ -14,11 +14,13 @@ def RAISE(exception=None):
         raise exception
 
 
-def TRY(value, func, handle):
-    try:
-        return func(value)
-    except Exception as exception:
-        return handle(exception)
+def TRY(func, handle):
+    def try_func(arg):
+        try:
+            return func(arg)
+        except Exception as exception:
+            return handle(exception)
+    return try_func
 
 
 class UnmatchedValueError(Exception):
@@ -189,13 +191,7 @@ class Track(object):
         return self.compose(success_func).handle(handle_func)
 
     def handle(self, *funcs):
-        def handle_func(arg):
-            return TRY(
-                arg,
-                self.func,
-                compose(*funcs)
-            )
-        return Track(handle_func)
+        return Track(TRY(self.func, handle=compose(*funcs)))
 
     def tee(self, *funcs):
         return self.compose(tee(*funcs))
