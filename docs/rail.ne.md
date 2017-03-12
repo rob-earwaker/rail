@@ -1,6 +1,12 @@
 ## `rail.ne`
 
-The [`rail.ne`](#raileq) function is a functional equivalent of the `!=` comparison operator, i.e. `rail.ne(value1, value2)` is equivalent to both `value1 != value2` and `value1.__ne__(value2)`:
+The [`rail.ne`](#railne) function is a functional equivalent of the `!=` comparison operator, i.e. the following expressions are all equivalent:
+
+- `rail.ne(value1, value2)`
+- `value1 != value2`
+- `value1.__ne__(value2)`
+- `operator.ne(value1, value2)`
+- `operator.__ne__(value1, value2)`
 
 ```python
 >>> import rail
@@ -13,13 +19,13 @@ True
 >>>
 ```
 
-The [`rail.ne`](#raileq) function also supports partial application through the [`rail.partial`](./rail.partial.md#railpartial) decorator:
+The advantage of the [`rail.ne`](#railne) function over the alternatives listed above is that it also supports partial application through the [`rail.partial`](./rail.partial.md#railpartial) decorator:
 
 ```python
->>> not_bob = rail.ne('Bob')
->>> not_bob('Ben')
+>>> nonzero = rail.ne(0)
+>>> nonzero(-7)
 True
->>> not_bob('Bob')
+>>> nonzero(0)
 False
 >>>
 ```
