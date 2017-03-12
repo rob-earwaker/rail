@@ -425,6 +425,17 @@ class TestGt(unittest.TestCase):
         self.assertFalse(rail.pipe(13, rail.gt(15)))
 
 
+class TestGe(unittest.TestCase):
+    def test_pipe_returns_true_for_different_values(self):
+        self.assertTrue(rail.pipe(6, rail.ge(2)))
+
+    def test_pipe_returns_true_for_equal_values(self):
+        self.assertTrue(rail.pipe(4, rail.ge(4)))
+
+    def test_pipe_returns_false(self):
+        self.assertFalse(rail.pipe(6, rail.ge(9)))
+
+
 class TestTrack(unittest.TestCase):
     def test_compose_with_existing_func(self):
         return_value1 = unittest.mock.Mock()

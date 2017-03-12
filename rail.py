@@ -202,6 +202,11 @@ def gt(value2, value1):
     return value1 > value2
 
 
+@partial
+def ge(value2, value1):
+    return value1 >= value2
+
+
 class Track(object):
     def __init__(self, func=identity):
         self.func = func
