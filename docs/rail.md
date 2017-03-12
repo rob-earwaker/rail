@@ -2,6 +2,7 @@
 
 - [Concept](./Concept.md#concept)
 - [`rail.compose`](./rail.compose.md#railcompose)
+- [`rail.eq`](./rail.eq.md#raileq)
 - [`rail.identity`](./rail.identity.md#railidentity)
 - [`rail.match`](./rail.match.md#railmatch)
 - [`rail.match_type`](./rail.match_type.md#railmatch_type)

@@ -376,6 +376,19 @@ class TestTee(unittest.TestCase):
         func3.assert_called_once_with(func2.return_value)
 
 
+class TestEq(unittest.TestCase):
+    def test_with_equal_values(self):
+        value = unittest.mock.Mock()
+        self.assertTrue(rail.eq(value, value))
+
+    def test_with_unequal_values(self):
+        self.assertFalse(rail.eq(unittest.mock.Mock(), unittest.mock.Mock()))
+
+    def test_partial_application(self):
+        value = unittest.mock.Mock()
+        self.assertTrue(rail.eq(value)(value))
+
+
 class TestTrack(unittest.TestCase):
     def test_compose_with_existing_func(self):
         return_value1 = unittest.mock.Mock()
