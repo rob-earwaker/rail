@@ -1,6 +1,6 @@
 ## `rail.eq`
 
-The [`rail.eq`](#raileq) function is a functional equivalent of the `==` comparison operator, i.e. `rail.eq(value2, value1)` is equivalent to both `value1 == value2` and `value1.__eq__(value2)`:
+The [`rail.eq`](#raileq) function is a functional equivalent of the `==` comparison operator, i.e. `rail.eq(value1, value2)` is equivalent to both `value1 == value2` and `value1.__eq__(value2)`:
 
 ```python
 >>> import rail
