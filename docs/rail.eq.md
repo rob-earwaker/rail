@@ -15,7 +15,7 @@ False
 
 Note that the following expressions are all equivalent:
 
-- `rail.eq(value1, value2)`
+- `rail.eq(value2, value1)`
 - `value1 == value2`
 - `value1.__eq__(value2)`
 - `operator.eq(value1, value2)`

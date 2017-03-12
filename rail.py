@@ -178,12 +178,12 @@ def tee(*funcs):
 
 
 @partial
-def eq(value1, value2):
+def eq(value2, value1):
     return value1 == value2
 
 
 @partial
-def ne(value1, value2):
+def ne(value2, value1):
     return value1 != value2
 
 

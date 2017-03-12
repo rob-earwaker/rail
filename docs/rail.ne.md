@@ -15,7 +15,7 @@ True
 
 Note that the following expressions are all equivalent:
 
-- `rail.ne(value1, value2)`
+- `rail.ne(value2, value1)`
 - `value1 != value2`
 - `value1.__ne__(value2)`
 - `operator.ne(value1, value2)`
