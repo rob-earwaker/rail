@@ -20,15 +20,7 @@ The [`rail.match`](#railmatch) function provides an expressive way to map a valu
 >>>
 ```
 
-> TIP: The match statements above could be simplified using the [`rail.gt`](./rail.gt.md#railgt), [`rail.lt`](./rail.lt.md#raillt) and [`rail.eq`](./rail.eq.md#raileq) functions, and the `str.format` function could be used with no arguments insteas of the `lambda` function to perform the mapping:
-> ```python
-> >>> func = rail.match(
-> ...     (rail.gt(0), '{0} is positive'.format),
-> ...     (rail.lt(0), '{0} is negative'.format),
-> ...     (rail.eq(0), lambda _: 'value is zero')
-> ... )
-> >>>
-> ```
+> TIP: The match statements above could be simplified using the [`rail.gt`](./rail.gt.md#railgt), [`rail.lt`](./rail.lt.md#raillt) and [`rail.eq`](./rail.eq.md#raileq) functions, e.g. `(rail.gt(0), lambda value: '{0} is positive'.format(value))`.
 
 Note that since the match statements are checked in order, only the first match will be used even if multiple statements match the input value:
 
