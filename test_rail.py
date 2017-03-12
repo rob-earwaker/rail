@@ -376,30 +376,45 @@ class TestTee(unittest.TestCase):
         func3.assert_called_once_with(func2.return_value)
 
 
+class TestLt(unittest.TestCase):
+    def test_pipe_returns_true(self):
+        self.assertTrue(rail.pipe(5, rail.lt(7)))
+
+    def test_pipe_returns_false(self):
+        self.assertFalse(rail.pipe(8, rail.lt(1)))
+
+
+class TestLe(unittest.TestCase):
+    def test_pipe_returns_true_for_different_values(self):
+        self.assertTrue(rail.pipe(5, rail.le(7)))
+
+    def test_pipe_returns_true_for_equal_values(self):
+        self.assertTrue(rail.pipe(5, rail.le(5)))
+
+    def test_pipe_returns_false(self):
+        self.assertFalse(rail.pipe(8, rail.le(1)))
+
+
 class TestEq(unittest.TestCase):
-    def test_with_equal_values(self):
+    def test_pipe_returns_true(self):
         value = unittest.mock.Mock()
-        self.assertTrue(rail.eq(value, value))
+        self.assertTrue(rail.pipe(value, rail.eq(value)))
 
-    def test_with_unequal_values(self):
-        self.assertFalse(rail.eq(unittest.mock.Mock(), unittest.mock.Mock()))
-
-    def test_partial_application(self):
-        value = unittest.mock.Mock()
-        self.assertTrue(rail.eq(value)(value))
+    def test_pipe_returns_false(self):
+        value1 = unittest.mock.Mock()
+        value2 = unittest.mock.Mock()
+        self.assertFalse(rail.pipe(value1, rail.eq(value2)))
 
 
 class TestNe(unittest.TestCase):
-    def test_with_equal_values(self):
-        value = unittest.mock.Mock()
-        self.assertFalse(rail.ne(value, value))
+    def test_pipe_returns_true(self):
+        value1 = unittest.mock.Mock()
+        value2 = unittest.mock.Mock()
+        self.assertTrue(rail.pipe(value1, rail.ne(value2)))
 
-    def test_with_unequal_values(self):
-        self.assertTrue(rail.ne(unittest.mock.Mock(), unittest.mock.Mock()))
-
-    def test_partial_application(self):
+    def test_pipe_returns_false(self):
         value = unittest.mock.Mock()
-        self.assertFalse(rail.ne(value)(value))
+        self.assertFalse(rail.pipe(value, rail.ne(value)))
 
 
 class TestTrack(unittest.TestCase):

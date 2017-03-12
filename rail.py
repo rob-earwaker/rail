@@ -178,6 +178,16 @@ def tee(*funcs):
 
 
 @partial
+def lt(value2, value1):
+    return value1 < value2
+
+
+@partial
+def le(value2, value1):
+    return value1 <= value2
+
+
+@partial
 def eq(value2, value1):
     return value1 == value2
 

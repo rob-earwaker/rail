@@ -4,6 +4,7 @@
 - [`rail.compose`](./rail.compose.md#railcompose)
 - [`rail.eq`](./rail.eq.md#raileq)
 - [`rail.identity`](./rail.identity.md#railidentity)
+- [`rail.lt`](./rail.lt.md#raillt)
 - [`rail.match`](./rail.match.md#railmatch)
 - [`rail.match_type`](./rail.match_type.md#railmatch_type)
 - [`rail.ne`](./rail.ne.md#railne)

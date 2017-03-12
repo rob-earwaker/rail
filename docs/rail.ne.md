@@ -1,33 +1,24 @@
 ## `rail.ne`
 
-The [`rail.ne`](#railne) function is a functional equivalent of the `!=` comparison operator:
+The [`rail.ne`](#railne) function is a functional equivalent of the `!=` comparison operator. In order to make it expressive when used as part of a function composition, the argument order is reversed, i.e. `value1 != value2` is equivalent to `rail.ne(value2, value1)`, and it supports partial application through the [`rail.partial`](./rail.partial.md#railpartial) decorator:
 
 ```python
 >>> import rail
 >>>
 >>> value = object()
->>> rail.ne(value, value)
-False
->>> rail.ne(value, object())
+>>> rail.pipe(value, rail.ne(object()))
 True
+>>> rail.pipe(value, rail.ne(value))
+False
 >>>
 ```
 
-Note that the following expressions are all equivalent:
-
-- `rail.ne(value2, value1)`
-- `value1 != value2`
-- `value1.__ne__(value2)`
-- `operator.ne(value1, value2)`
-- `operator.__ne__(value1, value2)`
-
-The advantage of the [`rail.ne`](#railne) function over the alternatives listed above is that it also supports partial application through the [`rail.partial`](./rail.partial.md#railpartial) decorator:
+Usage outside a function composition is not recommended as the `!=` operator is almost always clearer in these cases, but it is still possible:
 
 ```python
->>> nonzero = rail.ne(0)
->>> nonzero(-7)
+>>> rail.ne(object(), value)
 True
->>> nonzero(0)
+>>> rail.ne(value, value)
 False
 >>>
 ```
