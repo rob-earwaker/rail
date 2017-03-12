@@ -389,6 +389,19 @@ class TestEq(unittest.TestCase):
         self.assertTrue(rail.eq(value)(value))
 
 
+class TestNe(unittest.TestCase):
+    def test_with_equal_values(self):
+        value = unittest.mock.Mock()
+        self.assertFalse(rail.ne(value, value))
+
+    def test_with_unequal_values(self):
+        self.assertTrue(rail.ne(unittest.mock.Mock(), unittest.mock.Mock()))
+
+    def test_partial_application(self):
+        value = unittest.mock.Mock()
+        self.assertFalse(rail.ne(value)(value))
+
+
 class TestTrack(unittest.TestCase):
     def test_compose_with_existing_func(self):
         return_value1 = unittest.mock.Mock()

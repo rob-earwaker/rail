@@ -6,6 +6,7 @@
 - [`rail.identity`](./rail.identity.md#railidentity)
 - [`rail.match`](./rail.match.md#railmatch)
 - [`rail.match_type`](./rail.match_type.md#railmatch_type)
+- [`rail.ne`](./rail.ne.md#railne)
 - [`rail.partial`](./rail.partial.md#railpartial)
 - [`rail.pipe`](./rail.pipe.md#railpipe)
 - [`rail.RAISE`](./rail.RAISE.md#railraise)
