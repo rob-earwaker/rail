@@ -31,7 +31,7 @@ As with the [`rail.match`](./rail.match.md#railmatch) function, any unmatched va
 >>>
 ```
 
-One scenario where the [`rail.match_type`](#railmatch_type) is particularly useful is when handling exceptions using the [`rail.TRY`](./rail.TRY.md#railtry) function or the [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle) and [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold) methods:
+One scenario where the [`rail.match_type`](#railmatch_type) function is particularly useful is when handling exceptions using the [`rail.TRY`](./rail.TRY.md#railtry) function or the [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle) and [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold) methods:
 
 ```python
 >>> func = rail.Track().compose(
