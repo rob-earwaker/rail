@@ -289,6 +289,13 @@ class TestPartial(unittest.TestCase):
             {'arg1': val1, 'arg2': val2}, func(arg1=val1, arg2=val2)
         )
 
+    def test_docstring_preserved(self):
+        @rail.partial
+        def func():
+            """Docstring for func"""
+            pass
+        self.assertEqual('Docstring for func', func.__doc__)
+
 
 class TestCompose(unittest.TestCase):
     def test_compose_with_no_funcs(self):

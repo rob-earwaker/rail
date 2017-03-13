@@ -155,7 +155,7 @@ class Partial(object):
 
 
 def partial(func):
-    return Partial.from_func(func)
+    return functools.wraps(func)(Partial.from_func(func))
 
 
 def compose(*funcs):
