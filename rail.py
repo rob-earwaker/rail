@@ -125,39 +125,24 @@ class Args(object):
         return tuple(arg.value_or_default() for arg in self.named_args)
 
 
-class Partial(object):
-    def __init__(self, func, args):
-        self.func = func
-        self.args = args
-
-    @classmethod
-    def from_func(cls, func):
-        return pipe(
-            func,
-            inspect.getargspec,
-            Args.from_argspec,
-            lambda args: cls(func, args)
-        )
-
-    def execute(self):
-        return self.func(
-            *(self.args.named_arg_values() + self.args.list_args),
-            **self.args.keyword_args
-        )
-
-
 def partial(func, applied_args=None):
     @functools.wraps(func)
     def partial_func(*args, **kwargs):
-        cls = (
-            Partial.from_func(func) if applied_args is None
-            else Partial(func, applied_args)
-        )
-        new_args = cls.args.apply_args(*args, **kwargs)
-        cls = Partial(func, new_args)
-        return (
-            cls.execute() if cls.args.all_present()
-            else partial(func, cls.args)
+        return pipe(
+            applied_args,
+            lambda applied_args: (
+                applied_args if applied_args is not None
+                else pipe(func, inspect.getargspec, Args.from_argspec)
+
+            ),
+            lambda applied_args: applied_args.apply_args(*args, **kwargs),
+            lambda new_args: (
+                partial(func, new_args) if not new_args.all_present()
+                else func(
+                    *(new_args.named_arg_values() + new_args.list_args),
+                    **new_args.keyword_args
+                )
+            )
         )
     return partial_func
 
