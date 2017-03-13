@@ -139,14 +139,6 @@ class Partial(object):
             lambda args: cls(func, args)
         )
 
-    def __call__(self, *args, **kwargs):
-        return pipe(
-            self.args.apply_args(*args, **kwargs),
-            lambda args: Partial(self.func, args),
-            lambda partial:
-                partial.execute() if partial.args.all_present() else partial
-        )
-
     def execute(self):
         return self.func(
             *(self.args.named_arg_values() + self.args.list_args),
@@ -154,10 +146,19 @@ class Partial(object):
         )
 
 
-def partial(func):
+def partial(func, applied_args=None):
     @functools.wraps(func)
     def partial_func(*args, **kwargs):
-        return Partial.from_func(func)(*args, **kwargs)
+        cls = (
+            Partial.from_func(func) if applied_args is None
+            else Partial(func, applied_args)
+        )
+        new_args = cls.args.apply_args(*args, **kwargs)
+        cls = Partial(func, new_args)
+        return (
+            cls.execute() if cls.args.all_present()
+            else partial(func, cls.args)
+        )
     return partial_func
 
 
