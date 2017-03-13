@@ -124,6 +124,10 @@ class Args(object):
     def named_arg_values(self):
         return tuple(arg.value_or_default() for arg in self.named_args)
 
+    def execute(self, func):
+        args = self.named_arg_values() + self.list_args
+        return func(*args, **self.keyword_args)
+
 
 def partial(func, applied_args=None):
     @functools.wraps(func)
@@ -131,17 +135,13 @@ def partial(func, applied_args=None):
         return pipe(
             applied_args,
             lambda applied_args: (
-                applied_args if applied_args is not None
-                else pipe(func, inspect.getargspec, Args.from_argspec)
-
+                pipe(func, inspect.getargspec, Args.from_argspec)
+                if applied_args is None else applied_args
             ),
             lambda applied_args: applied_args.apply_args(*args, **kwargs),
             lambda new_args: (
-                partial(func, new_args) if not new_args.all_present()
-                else func(
-                    *(new_args.named_arg_values() + new_args.list_args),
-                    **new_args.keyword_args
-                )
+                new_args.execute(func) if new_args.all_present()
+                else partial(func, new_args)
             )
         )
     return partial_func
