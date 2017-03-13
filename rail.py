@@ -155,7 +155,10 @@ class Partial(object):
 
 
 def partial(func):
-    return functools.wraps(func)(Partial.from_func(func))
+    @functools.wraps(func)
+    def partial_func(*args, **kwargs):
+        return Partial.from_func(func)(*args, **kwargs)
+    return partial_func
 
 
 def compose(*funcs):
