@@ -291,10 +291,12 @@ class TestPartial(unittest.TestCase):
 
     def test_docstring_preserved(self):
         @rail.partial
-        def func():
+        def func1(arg1, arg2):
             """Docstring for func"""
-            pass
-        self.assertEqual('Docstring for func', func.__doc__)
+            return arg1, arg2
+        self.assertEqual('Docstring for func', func1.__doc__)
+        func2 = func1(unittest.mock.Mock())
+        self.assertEqual('Docstring for func', func2.__doc__)
 
 
 class TestCompose(unittest.TestCase):
