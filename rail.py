@@ -106,24 +106,35 @@ class Args(object):
         )
 
     def apply_named_arg(self, index, value):
-        named_args = copy.copy(self.named_args)
-        named_args[index] = named_args[index].with_value(value)
-        return Args(
-            named_args, copy.copy(self.list_args), copy.copy(self.keyword_args)
+        return pipe(
+            self.named_args.copy(),
+            tee(
+                lambda named_args: pipe(
+                    named_args.pop(index),
+                    lambda arg: named_args.insert(index, arg.with_value(value))
+                )
+            ),
+            lambda named_args: Args(
+                named_args, copy.copy(self.list_args), self.keyword_args.copy()
+            )
         )
 
     def apply_list_arg(self, value):
-        return Args(
-            copy.copy(self.named_args),
-            copy.copy(self.list_args) + (value,),
-            copy.copy(self.keyword_args)
+        return pipe(
+            copy.copy(self.list_args),
+            lambda list_args: list_args + (value,),
+            lambda list_args: Args(
+                self.named_args.copy(), list_args, self.keyword_args.copy()
+            )
         )
 
     def apply_keyword_arg(self, name, value):
-        keyword_args = copy.copy(self.keyword_args)
-        keyword_args[name] = value
-        return Args(
-            copy.copy(self.named_args), copy.copy(self.list_args), keyword_args
+        return pipe(
+            self.keyword_args.copy(),
+            tee(lambda keyword_args: keyword_args.update({name: value})),
+            lambda keyword_args: Args(
+                self.named_args.copy(), copy.copy(self.list_args), keyword_args
+            )
         )
 
     def apply_arg(self, value):
