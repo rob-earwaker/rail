@@ -78,7 +78,8 @@ class Args(object):
         self.keyword_args = keyword_args
 
     @classmethod
-    def from_argspec(cls, argspec):
+    def from_func(cls, func):
+        argspec = inspect.getargspec(func)
         defaults = argspec.defaults if argspec.defaults is not None else ()
         non_default_arg_count = len(argspec.args) - len(defaults)
         arg_defaults = (
@@ -170,12 +171,8 @@ def partial(func, applied_args=None):
     @functools.wraps(func)
     def partial_func(*args, **kwargs):
         return pipe(
-            applied_args,
-            lambda applied_args: (
-                pipe(func, inspect.getargspec, Args.from_argspec)
-                if applied_args is None else applied_args
-            ),
-            lambda applied_args: applied_args.apply(*args, **kwargs),
+            Args.from_func(func) if applied_args is None else applied_args,
+            lambda existing_args: existing_args.apply(*args, **kwargs),
             lambda new_args: (
                 new_args.execute(func) if new_args.all_present()
                 else partial(func, new_args)
