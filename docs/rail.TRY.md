@@ -25,11 +25,13 @@ To re-raise an exception, use the [`rail.RAISE`](./rail.RAISE.md#railraise) func
 >>> func = rail.TRY(
 ...     lambda value: 'length is {0}'.format(len(value)),
 ...     rail.compose(
+...         # Do some logging
 ...         rail.tee(
 ...             lambda exception: type(exception).__name__,
 ...             lambda type_name: 'FATAL: {0} raised!'.format(type_name),
 ...             lambda message: logfile.append(message)
 ...         ),
+...         # Re-raise the exception
 ...         lambda exception: rail.RAISE()
 ...     )
 ... )
