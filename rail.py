@@ -75,23 +75,27 @@ class Args(object):
 
     @classmethod
     def from_func(cls, func):
-        argspec = inspect.getargspec(func)
-        defaults = pipe(
-            argspec.defaults if argspec.defaults is not None else (),
+        return pipe(
+            func,
+            inspect.getargspec,
+            lambda argspec: pipe(
+                argspec.defaults if argspec.defaults is not None else (),
+                reversed,
+                list,
+                lambda defaults: pipe(
+                    argspec.args,
+                    reversed,
+                    lambda args: [
+                        NamedArg(name, defaults[index])
+                        if len(defaults) > index else NamedArg(name)
+                        for index, name in enumerate(args)
+                    ]
+                )
+            ),
             reversed,
-            list
+            list,
+            lambda named_args: cls(named_args, list_args=(), keyword_args={})
         )
-        named_args = pipe(
-            argspec.args,
-            reversed,
-            lambda args: [
-                NamedArg(name, defaults[index]) if len(defaults) > index
-                else NamedArg(name) for index, name in enumerate(args)
-            ],
-            reversed,
-            list
-        )
-        return cls(named_args, list_args=(), keyword_args={})
 
     def get_named_arg_index(self, is_match):
         return pipe(
