@@ -49,14 +49,10 @@ class NamedArg(object):
     NO_VALUE = object()
     NO_DEFAULT = object()
 
-    def __init__(self, name, default, value):
+    def __init__(self, name, default=NO_DEFAULT, value=NO_VALUE):
         self.name = name
         self.default = default
         self.value = value
-
-    @classmethod
-    def from_name(cls, name, default=NO_DEFAULT):
-        return cls(name, default, value=NamedArg.NO_VALUE)
 
     def has_value(self):
         return self.value != NamedArg.NO_VALUE
@@ -80,19 +76,22 @@ class Args(object):
     @classmethod
     def from_func(cls, func):
         argspec = inspect.getargspec(func)
-        defaults = argspec.defaults if argspec.defaults is not None else ()
-        non_default_arg_count = len(argspec.args) - len(defaults)
-        arg_defaults = (
-            (NamedArg.NO_DEFAULT,) * non_default_arg_count + defaults
+        defaults = pipe(
+            argspec.defaults if argspec.defaults is not None else (),
+            reversed,
+            list
         )
-        return cls(
-            named_args=[
-                NamedArg.from_name(name, default)
-                for name, default in zip(argspec.args, arg_defaults)
+        named_args = pipe(
+            argspec.args,
+            reversed,
+            lambda args: [
+                NamedArg(name, defaults[index]) if len(defaults) > index
+                else NamedArg(name) for index, name in enumerate(args)
             ],
-            list_args=(),
-            keyword_args={}
+            reversed,
+            list
         )
+        return cls(named_args, list_args=(), keyword_args={})
 
     def get_named_arg_index(self, is_match):
         return pipe(
