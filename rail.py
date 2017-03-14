@@ -100,16 +100,28 @@ class Args(object):
             None
         )
 
-    def apply_arg(self, arg):
+    def apply_named_arg(self, index, value):
         named_args = copy.copy(self.named_args)
-        list_args = copy.copy(self.list_args)
-        keyword_args = copy.copy(self.keyword_args)
-        index = Args.get_index(named_args, lambda arg: not arg.has_value())
-        if index is not None:
-            named_args[index] = named_args[index].with_value(arg)
-        else:
-            list_args += (arg,)
-        return Args(named_args, list_args, keyword_args)
+        named_args[index] = named_args[index].with_value(value)
+        return Args(
+            named_args, copy.copy(self.list_args), copy.copy(self.keyword_args)
+        )
+
+    def apply_list_arg(self, value):
+        return Args(
+            copy.copy(self.named_args),
+            copy.copy(self.list_args) + (value,),
+            copy.copy(self.keyword_args)
+        )
+
+    def apply_arg(self, value):
+        index = Args.get_index(
+            self.named_args, lambda arg: not arg.has_value()
+        )
+        return (
+            self.apply_named_arg(index, value) if index is not None
+            else self.apply_list_arg(value)
+        )
 
     def apply_kwarg(self, name, arg):
         named_args = copy.copy(self.named_args)
