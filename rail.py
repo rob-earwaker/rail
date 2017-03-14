@@ -100,7 +100,7 @@ class Args(object):
             None
         )
 
-    def apply_args(self, *args, **kwargs):
+    def apply_args(self, *args):
         named_args = copy.copy(self.named_args)
         list_args = copy.copy(self.list_args)
         keyword_args = copy.copy(self.keyword_args)
@@ -110,6 +110,12 @@ class Args(object):
                 named_args[index] = named_args[index].with_value(value)
             else:
                 list_args += (value,)
+        return Args(named_args, list_args, keyword_args)
+
+    def apply_kwargs(self, **kwargs):
+        named_args = copy.copy(self.named_args)
+        list_args = copy.copy(self.list_args)
+        keyword_args = copy.copy(self.keyword_args)
         for name, value in kwargs.items():
             index = Args.get_index(named_args, lambda arg: arg.name == name)
             if index is not None:
@@ -117,6 +123,9 @@ class Args(object):
             else:
                 keyword_args[name] = value
         return Args(named_args, list_args, keyword_args)
+
+    def apply(self, *args, **kwargs):
+        return self.apply_args(*args).apply_kwargs(**kwargs)
 
     def all_present(self):
         return all(arg.has_value_or_default() for arg in self.named_args)
@@ -138,7 +147,7 @@ def partial(func, applied_args=None):
                 pipe(func, inspect.getargspec, Args.from_argspec)
                 if applied_args is None else applied_args
             ),
-            lambda applied_args: applied_args.apply_args(*args, **kwargs),
+            lambda applied_args: applied_args.apply(*args, **kwargs),
             lambda new_args: (
                 new_args.execute(func) if new_args.all_present()
                 else partial(func, new_args)
