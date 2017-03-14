@@ -82,13 +82,13 @@ class Args(object):
                 argspec.defaults if argspec.defaults is not None else (),
                 reversed,
                 list,
-                lambda defaults: pipe(
+                lambda rdefaults: pipe(
                     argspec.args,
                     reversed,
-                    lambda args: [
-                        NamedArg(name, defaults[index])
-                        if len(defaults) > index else NamedArg(name)
-                        for index, name in enumerate(args)
+                    lambda rargs: [
+                        NamedArg(name, rdefaults[index])
+                        if len(rdefaults) > index else NamedArg(name)
+                        for index, name in enumerate(rargs)
                     ]
                 )
             ),
