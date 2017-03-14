@@ -111,24 +111,28 @@ class Args(object):
             list_args += (arg,)
         return Args(named_args, list_args, keyword_args)
 
-    def apply_args(self, *args):
-        return functools.reduce(
-            lambda args, arg: args.apply_arg(arg),
-            args,
-            self
-        )
-
-    def apply_kwargs(self, **kwargs):
+    def apply_kwarg(self, name, arg):
         named_args = copy.copy(self.named_args)
         list_args = copy.copy(self.list_args)
         keyword_args = copy.copy(self.keyword_args)
-        for name, value in kwargs.items():
-            index = Args.get_index(named_args, lambda arg: arg.name == name)
-            if index is not None:
-                named_args[index] = named_args[index].with_value(value)
-            else:
-                keyword_args[name] = value
+        index = Args.get_index(named_args, lambda arg: arg.name == name)
+        if index is not None:
+            named_args[index] = named_args[index].with_value(arg)
+        else:
+            keyword_args[name] = arg
         return Args(named_args, list_args, keyword_args)
+
+    def apply_args(self, *args):
+        return functools.reduce(
+            lambda args, arg: args.apply_arg(arg), args, self
+        )
+
+    def apply_kwargs(self, **kwargs):
+        return functools.reduce(
+            lambda args, name: args.apply_kwarg(name, kwargs[name]),
+            kwargs,
+            self
+        )
 
     def apply(self, *args, **kwargs):
         return self.apply_args(*args).apply_kwargs(**kwargs)
