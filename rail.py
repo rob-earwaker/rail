@@ -75,8 +75,7 @@ class Args(object):
     @classmethod
     def from_func(cls, func):
         return pipe(
-            func,
-            inspect.getargspec,
+            inspect.getargspec(func),
             lambda argspec: pipe(
                 argspec.defaults if argspec.defaults is not None else (),
                 reversed,
@@ -98,9 +97,9 @@ class Args(object):
 
     def get_named_arg_index(self, is_match):
         return pipe(
-            enumerate(self.named_args),
-            lambda iterator:
-                (index for index, arg in iterator if is_match(arg)),
+            self.named_args,
+            lambda args:
+                (index for index, arg in enumerate(args) if is_match(arg)),
             lambda iterator: next(iterator, None)
         )
 
