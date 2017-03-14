@@ -93,11 +93,12 @@ class Args(object):
             keyword_args={}
         )
 
-    @staticmethod
-    def get_index(named_args, is_match):
-        return next(
-            (index for index, arg in enumerate(named_args) if is_match(arg)),
-            None
+    def get_named_arg_index(self, is_match):
+        return pipe(
+            enumerate(self.named_args),
+            lambda iterator:
+                (index for index, arg in iterator if is_match(arg)),
+            lambda iterator: next(iterator, None)
         )
 
     def apply_named_arg(self, index, value):
@@ -122,19 +123,21 @@ class Args(object):
         )
 
     def apply_arg(self, value):
-        index = Args.get_index(
-            self.named_args, lambda arg: not arg.has_value()
-        )
-        return (
-            self.apply_named_arg(index, value) if index is not None
-            else self.apply_list_arg(value)
+        return pipe(
+            self.get_named_arg_index(lambda arg: not arg.has_value()),
+            lambda index: (
+                self.apply_named_arg(index, value) if index is not None
+                else self.apply_list_arg(value)
+            )
         )
 
     def apply_kwarg(self, name, value):
-        index = Args.get_index(self.named_args, lambda arg: arg.name == name)
-        return (
-            self.apply_named_arg(index, value) if index is not None
-            else self.apply_keyword_arg(name, value)
+        return pipe(
+            self.get_named_arg_index(lambda arg: arg.name == name),
+            lambda index: (
+                self.apply_named_arg(index, value) if index is not None
+                else self.apply_keyword_arg(name, value)
+            )
         )
 
     def apply_args(self, *args):
