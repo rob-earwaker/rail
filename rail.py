@@ -1,4 +1,3 @@
-import copy
 import functools
 import inspect
 
@@ -115,14 +114,13 @@ class Args(object):
                 )
             ),
             lambda named_args: Args(
-                named_args, copy.copy(self.list_args), self.keyword_args.copy()
+                named_args, self.list_args, self.keyword_args.copy()
             )
         )
 
     def apply_list_arg(self, value):
         return pipe(
-            copy.copy(self.list_args),
-            lambda list_args: list_args + (value,),
+            self.list_args + (value,),
             lambda list_args: Args(
                 self.named_args.copy(), list_args, self.keyword_args.copy()
             )
@@ -133,7 +131,7 @@ class Args(object):
             self.keyword_args.copy(),
             tee(lambda keyword_args: keyword_args.update({name: value})),
             lambda keyword_args: Args(
-                self.named_args.copy(), copy.copy(self.list_args), keyword_args
+                self.named_args.copy(), self.list_args, keyword_args
             )
         )
 
