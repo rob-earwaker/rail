@@ -17,7 +17,7 @@ The [`rail.match_length`](#railmatch_length) function is a convenience function 
 >>>
 ```
 
-> TIP: The match statements above could be simplified using the [`rail.lt`](./rail.lt.md#raillt) and [`rail.gt`](./rail.gt.md#railgt) functions, e.g. `lambda length: langth < 6` could be replaced with `rail.lt(6)`.
+> TIP: The match statements above could be simplified using the [`rail.lt`](./rail.lt.md#raillt) and [`rail.gt`](./rail.gt.md#railgt) functions, e.g. `lambda length: langth < 6` could be replaced with `rail.lt(6)`. In fact, the mapping functions could also be simplified, e.g. `lambda value: '"{0}" is a short word'.format(value)` could be replaced with `'"{0}" is a short word'.format`.
 
 As with the [`rail.match`](./rail.match.md#railmatch) function, any unmatched values will result in an [`rail.UnmatchedValueError`](./rail.UnmatchedValueError.md#railunmatchedvalueerror) exception being raised. To prevent this, add a default match statement:
 

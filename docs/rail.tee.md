@@ -7,12 +7,16 @@ The [`rail.tee`](#railtee) function can be used to create a single-argument func
 >>>
 >>> logfile = []
 >>>
->>> func = rail.Track().tee(
-...     lambda value: logfile.append('Converting {0} to upper case'.format(value))
-... ).compose(
-...     lambda value: value.upper()
-... ).tee(
-...     lambda upper: logfile.append('Result is {0}'.format(upper))
+>>> func = rail.compose(
+...     rail.tee(
+...         lambda value: 'Converting {0} to upper case'.format(value),
+...         lambda message: logfile.append(message)
+...     ),
+...     lambda value: value.upper(),
+...     rail.tee(
+...         lambda value: 'Result is {0}'.format(value),
+...         lambda message: logfile.append(message)
+...     )
 ... )
 >>>
 >>> func('dog')

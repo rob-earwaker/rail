@@ -20,7 +20,7 @@ The [`rail.match`](#railmatch) function provides an expressive way to map a valu
 >>>
 ```
 
-> TIP: The match statements above could be simplified using the [`rail.gt`](./rail.gt.md#railgt), [`rail.lt`](./rail.lt.md#raillt) and [`rail.eq`](./rail.eq.md#raileq) functions, e.g. `lambda value: value > 0` could be replaced with `rail.gt(0)`.
+> TIP: The match statements above could be simplified using the [`rail.gt`](./rail.gt.md#railgt), [`rail.lt`](./rail.lt.md#raillt) and [`rail.eq`](./rail.eq.md#raileq) functions, e.g. `lambda value: value > 0` could be replaced with `rail.gt(0)`. In fact, the mapping functions could also be simplified, e.g. `lambda value: '{0} is positive'.format(value)` could be replaced with `'{0} is positive'.format`.
 
 Note that since the match statements are checked in order, only the first match will be used even if multiple statements match the input value:
 
