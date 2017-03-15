@@ -8,6 +8,7 @@
 - [`rail.identity`](./rail.identity.md#railidentity)
 - [`rail.lt`](./rail.lt.md#raillt)
 - [`rail.match`](./rail.match.md#railmatch)
+- [`rail.match_length`](./rail.match_length.md#railmatch_length)
 - [`rail.match_type`](./rail.match_type.md#railmatch_type)
 - [`rail.ne`](./rail.ne.md#railne)
 - [`rail.partial`](./rail.partial.md#railpartial)

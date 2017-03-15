@@ -44,6 +44,16 @@ def match_type(*args):
     ])
 
 
+def match_length(*args):
+    return match(*[
+        (
+            lambda value, match_len=match_len: pipe(value, len, match_len),
+            map_func
+        )
+        for match_len, map_func in args
+    ])
+
+
 class NamedArg(object):
     NO_VALUE = object()
     NO_DEFAULT = object()

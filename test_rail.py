@@ -157,6 +157,47 @@ class TestMatchType(unittest.TestCase):
         self.assertEqual(expected_value, match(unittest.mock.Mock()))
 
 
+class TestMatchLength(unittest.TestCase):
+    def test_no_match_statements_provided(self):
+        value = unittest.mock.Mock()
+        with self.assertRaises(rail.UnmatchedValueError) as context:
+            rail.match_length()(value)
+        self.assertEqual(value, context.exception.value)
+
+    def test_value_unmatched_by_all_match_statements(self):
+        value = unittest.mock.Mock()
+        value.__len__ = unittest.mock.Mock(return_value=2)
+        with self.assertRaises(rail.UnmatchedValueError) as context:
+            match = rail.match_length(
+                (rail.eq(8), lambda _: unittest.mock.Mock()),
+                (rail.gt(3), lambda _: unittest.mock.Mock())
+            )
+            match(value)
+        self.assertEqual(value, context.exception.value)
+
+    def test_value_matches_single_match_statement(self):
+        expected_value = unittest.mock.Mock()
+        match = rail.match_length(
+            (rail.lt(0), lambda _: unittest.mock.Mock()),
+            (rail.eq(0), lambda _: expected_value),
+            (rail.gt(0), lambda _: unittest.mock.Mock())
+        )
+        value = unittest.mock.Mock()
+        value.__len__ = unittest.mock.Mock(return_value=0)
+        self.assertEqual(expected_value, match(value))
+
+    def test_value_matches_multiple_match_statements(self):
+        expected_value = unittest.mock.Mock()
+        match = rail.match_length(
+            (rail.lt(0), lambda _: unittest.mock.Mock()),
+            (rail.ge(0), lambda _: expected_value),
+            (rail.eq(0), lambda _: unittest.mock.Mock())
+        )
+        value = unittest.mock.Mock()
+        value.__len__ = unittest.mock.Mock(return_value=0)
+        self.assertEqual(expected_value, match(value))
+
+
 class TestPartial(unittest.TestCase):
     def test_func_with_no_args(self):
         @rail.partial
