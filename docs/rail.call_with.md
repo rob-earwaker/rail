@@ -1,6 +1,6 @@
 ## `rail.call_with`
 
-The [`rail.call_with`](#railcall_with) function is used to call a function with an argument. In order to make it expressive when used as part of a function composition, the argument order is reversed, i.e. `func(value)` is equivalent to `rail.call_with(value, func)`, and it supports partial application through the [`rail.partial`](./rail.partial.md#railpartial) decorator:
+The [`rail.call_with`](#railcall_with) function is used to call a function with an argument. In order to make it expressive when used as part of a function composition the argument is provided first, followed by the function, i.e. `func(value)` is equivalent to `rail.call_with(value, func)`, and it supports partial application through the [`rail.partial`](./rail.partial.md#railpartial) decorator:
 
 ```python
 >>> import rail

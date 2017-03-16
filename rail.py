@@ -32,9 +32,9 @@ def match(*args):
     return lambda value: pipe(
         next(
             (map_func for is_match, map_func in args if is_match(value)),
-            lambda _: RAISE(UnmatchedValueError(value))
+            lambda _: pipe(value, UnmatchedValueError, RAISE)
         ),
-        lambda map_func: map_func(value)
+        call_with(value)
     )
 
 
