@@ -29,12 +29,13 @@ class UnmatchedValueError(Exception):
 
 
 def match(*args):
-    def get_map_func(value):
-        for is_match, map_func in args:
-            if is_match(value):
-                return map_func
-        raise UnmatchedValueError(value)
-    return lambda value: get_map_func(value)(value)
+    return lambda value: pipe(
+        next(
+            (map_func for is_match, map_func in args if is_match(value)),
+            lambda _: RAISE(UnmatchedValueError(value))
+        ),
+        lambda map_func: map_func(value)
+    )
 
 
 def match_type(*args):
