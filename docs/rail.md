@@ -1,6 +1,7 @@
 # `rail`
 
 - [Concept](./Concept.md#concept)
+- [`rail.call_with`](./rail.call_with.md#railcall_with)
 - [`rail.compose`](./rail.compose.md#railcompose)
 - [`rail.eq`](./rail.eq.md#raileq)
 - [`rail.gt`](./rail.gt.md#railgt)

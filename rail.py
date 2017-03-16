@@ -223,6 +223,11 @@ def tee(*funcs):
 
 
 @partial
+def call_with(value, func):
+    return func(value)
+
+
+@partial
 def lt(value2, value1):
     return value1 < value2
 

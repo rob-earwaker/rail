@@ -12,6 +12,26 @@ class TestIdentity(unittest.TestCase):
         self.assertEqual(value, rail.identity(value))
 
 
+class TestCallWith(unittest.TestCase):
+    def test_calls_function_with_value(self):
+        value = unittest.mock.Mock()
+        func = unittest.mock.Mock()
+        rail.call_with(value, func)
+        func.assert_called_once_with(value)
+
+    def test_partial_application(self):
+        value = unittest.mock.Mock()
+        func = unittest.mock.Mock()
+        rail.pipe(func, rail.call_with(value))
+
+    def test_returns_func_return_value(self):
+        return_value = unittest.mock.Mock()
+        func = unittest.mock.Mock(return_value=return_value)
+        self.assertEqual(
+            return_value, rail.call_with(unittest.mock.Mock(), func)
+        )
+
+
 class TestRaise(unittest.TestCase):
     def test_raises_exception(self):
         with self.assertRaises(ValueError) as context:
