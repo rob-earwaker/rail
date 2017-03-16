@@ -55,7 +55,7 @@ def match_length(*args):
     ])
 
 
-class NamedArg(object):
+class NamedArg:
     NO_VALUE = object()
     NO_DEFAULT = object()
 
@@ -77,7 +77,7 @@ class NamedArg(object):
         return NamedArg(self.name, self.default, value)
 
 
-class Args(object):
+class Args:
     def __init__(self, named_args, list_args, keyword_args):
         self.named_args = named_args
         self.list_args = list_args
@@ -257,7 +257,7 @@ def ge(value2, value1):
     return value1 >= value2
 
 
-class Track(object):
+class Track:
     def __init__(self, func=identity):
         self.func = func
 
