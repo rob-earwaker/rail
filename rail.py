@@ -77,23 +77,6 @@ class NamedArg:
         return NamedArg(self.name, self.default, value)
 
 
-class NamedArgs:
-    def __init__(self, args):
-        self.args = args
-
-    def index(self, is_match, default=None):
-        return next(
-            (index for index, arg in enumerate(self.args) if is_match(arg)),
-            default
-        )
-
-    def apply(self, index, value):
-        return NamedArgs(
-            arg.with_value(value) if index == index_ else arg
-            for index_, arg in enumerate(self.args)
-        )
-
-
 class Args:
     def __init__(self, named_args, list_args, keyword_args):
         self.named_args = named_args
