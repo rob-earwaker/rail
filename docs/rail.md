@@ -12,6 +12,7 @@
 - [`rail.match_length`](./rail.match_length.md#railmatch_length)
 - [`rail.match_type`](./rail.match_type.md#railmatch_type)
 - [`rail.ne`](./rail.ne.md#railne)
+- [`rail.not_`](./rail.not_.md#railnot_)
 - [`rail.partial`](./rail.partial.md#railpartial)
 - [`rail.pipe`](./rail.pipe.md#railpipe)
 - [`rail.raise_`](./rail.raise_.md#railraise_)

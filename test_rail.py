@@ -12,24 +12,14 @@ class TestIdentity(unittest.TestCase):
         self.assertEqual(value, rail.identity(value))
 
 
-class TestCallWith(unittest.TestCase):
-    def test_calls_function_with_value(self):
-        value = unittest.mock.Mock()
-        func = unittest.mock.Mock()
-        rail.call_with(value, func)
-        func.assert_called_once_with(value)
+class TestNot(unittest.TestCase):
+    def test_returns_inverse_for_bool(self):
+        self.assertEquals(True, rail.not_(False))
+        self.assertEquals(False, rail.not_(True))
 
-    def test_partial_application(self):
-        value = unittest.mock.Mock()
-        func = unittest.mock.Mock()
-        rail.pipe(func, rail.call_with(value))
-
-    def test_returns_func_return_value(self):
-        return_value = unittest.mock.Mock()
-        func = unittest.mock.Mock(return_value=return_value)
-        self.assertEqual(
-            return_value, rail.call_with(unittest.mock.Mock(), func)
-        )
+    def test_returns_inverse_for_truthy(self):
+        self.assertEquals(True, rail.not_([]))
+        self.assertEquals(False, rail.not_([0]))
 
 
 class TestRaise(unittest.TestCase):
@@ -444,6 +434,26 @@ class TestTee(unittest.TestCase):
         func1.assert_called_once_with(input)
         func2.assert_called_once_with(func1.return_value)
         func3.assert_called_once_with(func2.return_value)
+
+
+class TestCallWith(unittest.TestCase):
+    def test_calls_function_with_value(self):
+        value = unittest.mock.Mock()
+        func = unittest.mock.Mock()
+        rail.call_with(value, func)
+        func.assert_called_once_with(value)
+
+    def test_partial_application(self):
+        value = unittest.mock.Mock()
+        func = unittest.mock.Mock()
+        rail.pipe(func, rail.call_with(value))
+
+    def test_returns_func_return_value(self):
+        return_value = unittest.mock.Mock()
+        func = unittest.mock.Mock(return_value=return_value)
+        self.assertEqual(
+            return_value, rail.call_with(unittest.mock.Mock(), func)
+        )
 
 
 class TestLt(unittest.TestCase):

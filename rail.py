@@ -6,6 +6,10 @@ def identity(value):
     return value
 
 
+def not_(value):
+    return not value
+
+
 def raise_(exception=None):
     if exception is None:
         raise
