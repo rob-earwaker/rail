@@ -13,7 +13,7 @@ def raise_(exception=None):
         raise exception
 
 
-def TRY(func, handle):
+def try_(func, handle):
     def try_func(arg):
         try:
             return func(arg)
@@ -288,7 +288,7 @@ class Track:
         return self.compose(success_func).handle(handle_func)
 
     def handle(self, *funcs):
-        return Track(TRY(self.func, handle=compose(*funcs)))
+        return Track(try_(self.func, handle=compose(*funcs)))
 
     def tee(self, *funcs):
         return self.compose(tee(*funcs))

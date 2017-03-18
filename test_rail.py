@@ -79,7 +79,7 @@ class TestTry(unittest.TestCase):
         expected_value = unittest.mock.Mock()
         func = unittest.mock.Mock(return_value=expected_value)
         handle = unittest.mock.Mock()
-        self.assertEqual(expected_value, rail.TRY(func, handle)(input))
+        self.assertEqual(expected_value, rail.try_(func, handle)(input))
         func.assert_called_once_with(input)
         handle.assert_not_called()
 
@@ -89,7 +89,7 @@ class TestTry(unittest.TestCase):
         func = unittest.mock.Mock(side_effect=lambda _: rail.raise_(exception))
         output = unittest.mock.Mock()
         handle = unittest.mock.Mock(return_value=output)
-        self.assertEqual(output, rail.TRY(func, handle)(input))
+        self.assertEqual(output, rail.try_(func, handle)(input))
         func.assert_called_once_with(input)
         handle.assert_called_once_with(exception)
 

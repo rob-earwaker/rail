@@ -1,11 +1,11 @@
-## `rail.TRY`
+## `rail.try_`
 
-The [`rail.TRY`](#railtry) function provides a mechanism for guarding a function against exceptions. It accepts two arguments, the first of which is a function that requires guarding and the second is a function to handle any `Exception` raised during execution. The returned value is a function that can be called with a single argument, which executes the guarded function within a `try` block abd handles any raised `Exception` using the handle function in an `except` block. The result is either the result of the guarded function or the result of the exception handling function, depending on whether or not an `Exception` was raised.
+The [`rail.try_`](#railtry_) function provides a mechanism for guarding a function against exceptions. It accepts two arguments, the first of which is a function that requires guarding and the second is a function to handle any `Exception` raised during execution. The returned value is a function that can be called with a single argument, which executes the guarded function within a `try` block abd handles any raised `Exception` using the handle function in an `except` block. The result is either the result of the guarded function or the result of the exception handling function, depending on whether or not an `Exception` was raised.
 
 ```python
 >>> import rail
 >>>
->>> func = rail.TRY(
+>>> func = rail.try_(
 ...     lambda value: 'length is {0}'.format(len(value)),
 ...     lambda exception: 'handled {0}'.format(type(exception).__name__)
 ... )
@@ -22,7 +22,7 @@ To re-raise an exception, use the [`rail.raise_`](./rail.raise_.md#railraise_) f
 ```python
 >>> logfile = []
 >>>
->>> func = rail.TRY(
+>>> func = rail.try_(
 ...     lambda value: 'length is {0}'.format(len(value)),
 ...     rail.compose(
 ...         # Do some logging

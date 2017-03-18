@@ -21,5 +21,5 @@
 - [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold)
 - [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle)
 - [`rail.Track.tee`](./rail.Track.tee.md#railtracktee)
-- [`rail.TRY`](./rail.TRY.md#railtry)
+- [`rail.try_`](./rail.try_.md#railtry_)
 - [`rail.UnmatchedValueError`](./rail.UnmatchedValueError.md#railunmatchedvalueerror)

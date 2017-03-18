@@ -17,7 +17,7 @@ The [`rail.match_type`](#railmatch_type) function is a convenience function to a
 >>>
 ```
 
-> TIP: The [`rail.match_type`](#railmatch_type) function is particularly useful when handling exceptions using the [`rail.TRY`](./rail.TRY.md#railtry) function or the [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle) and [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold) methods.
+> TIP: The [`rail.match_type`](#railmatch_type) function is particularly useful when handling exceptions using the [`rail.try_`](./rail.try_.md#railtry_) function or the [`rail.Track.handle`](./rail.Track.handle.md#railtrackhandle) and [`rail.Track.fold`](./rail.Track.fold.md#railtrackfold) methods.
 
 As with the [`rail.match`](./rail.match.md#railmatch) function, any unmatched values will result in an [`rail.UnmatchedValueError`](./rail.UnmatchedValueError.md#railunmatchedvalueerror) exception being raised. To prevent this, add a default match statement:
 
