@@ -6,7 +6,7 @@ def identity(value):
     return value
 
 
-def RAISE(exception=None):
+def raise_(exception=None):
     if exception is None:
         raise
     else:
@@ -32,7 +32,7 @@ def match(*args):
     return lambda value: pipe(
         next(
             (map_func for is_match, map_func in args if is_match(value)),
-            lambda _: pipe(value, UnmatchedValueError, RAISE)
+            lambda _: pipe(value, UnmatchedValueError, raise_)
         ),
         call_with(value)
     )
@@ -75,6 +75,23 @@ class NamedArg:
 
     def with_value(self, value):
         return NamedArg(self.name, self.default, value)
+
+
+class NamedArgs:
+    def __init__(self, args):
+        self.args = args
+
+    def index(self, is_match, default=None):
+        return next(
+            (index for index, arg in enumerate(self.args) if is_match(arg)),
+            default
+        )
+
+    def apply(self, index, value):
+        return NamedArgs(
+            arg.with_value(value) if index == index_ else arg
+            for index_, arg in enumerate(self.args)
+        )
 
 
 class Args:

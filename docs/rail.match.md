@@ -80,7 +80,7 @@ In most cases it's useful to add a default match statement, which can always rai
 >>> func = rail.match(
 ...     (lambda value: value in fruit, lambda value: '{0} is a fruit'.format(value)),
 ...     (lambda value: value in vegetables, lambda value: '{0} is a vegetable'.format(value)),
-...     (lambda _: True, lambda value: rail.RAISE(UnknownFoodTypeError(value)))
+...     (lambda _: True, lambda value: rail.raise_(UnknownFoodTypeError(value)))
 ... )
 >>>
 >>> func('bean')

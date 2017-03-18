@@ -8,7 +8,7 @@ On execution of the [`rail.Track`](./rail.Track.md#railtrack), any `Exception` t
 >>> import rail
 >>>
 >>> func = rail.Track().compose(
-...     lambda value: value if value < 10 else rail.RAISE(ValueError('value must be < 10')),
+...     lambda value: value if value < 10 else rail.raise_(ValueError('value must be < 10')),
 ...     lambda value: value + 10
 ... ).handle(
 ...     lambda exception: str(exception),

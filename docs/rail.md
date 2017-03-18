@@ -14,7 +14,7 @@
 - [`rail.ne`](./rail.ne.md#railne)
 - [`rail.partial`](./rail.partial.md#railpartial)
 - [`rail.pipe`](./rail.pipe.md#railpipe)
-- [`rail.RAISE`](./rail.RAISE.md#railraise)
+- [`rail.raise_`](./rail.raise_.md#railraise_)
 - [`rail.tee`](./rail.tee.md#railtee)
 - [`rail.Track`](./rail.Track.md#railtrack)
 - [`rail.Track.compose`](./rail.Track.compose.md#railtrackcompose)

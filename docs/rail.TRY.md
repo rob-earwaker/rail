@@ -17,7 +17,7 @@ The [`rail.TRY`](#railtry) function provides a mechanism for guarding a function
 >>>
 ```
 
-To re-raise an exception, use the [`rail.RAISE`](./rail.RAISE.md#railraise) function:
+To re-raise an exception, use the [`rail.raise_`](./rail.raise_.md#railraise_) function:
 
 ```python
 >>> logfile = []
@@ -32,7 +32,7 @@ To re-raise an exception, use the [`rail.RAISE`](./rail.RAISE.md#railraise) func
 ...             lambda message: logfile.append(message)
 ...         ),
 ...         # Re-raise the exception
-...         lambda exception: rail.RAISE()
+...         lambda exception: rail.raise_()
 ...     )
 ... )
 >>>
