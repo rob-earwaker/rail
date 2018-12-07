@@ -1,6 +1,6 @@
 ## `rail.UnmatchedValueError`
 
-A [`rail.UnmatchedValueError`](#railunmatchedvalueerror) is raised when the function returned by one of the following match functions is passed a value that doesn't match any of the match statements:
+An [`rail.UnmatchedValueError`](#railunmatchedvalueerror) is raised when the function returned by one of the following match functions is passed a value that doesn't match any of the match statements:
 
 - [`rail.match`](./rail.match.md#railmatch)
 - [`rail.match_length`](./rail.match_length.md#railmatch_length)
@@ -22,7 +22,7 @@ rail.UnmatchedValueError: 1
 >>>
 ```
 
-Note that when creating a match function it is recommended that a default match statement is included to prevent a [`rail.UnmatchedValueError`](#railunmatchedvalueerror) being raised:
+Note that when creating a match function it is recommended that a default match statement is included to prevent an [`rail.UnmatchedValueError`](#railunmatchedvalueerror) being raised:
 
 ```python
 >>> func = rail.match(

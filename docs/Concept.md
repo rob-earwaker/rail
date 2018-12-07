@@ -81,7 +81,7 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 ...
 >>> class NegativeAgeError(Exception):
 ...     def __init__(self, date):
-...         message = 'Date of birth is before {0}'.format(date)
+...         message = 'Date of birth is after {0}'.format(date)
 ...         super(NegativeAgeError, self).__init__(message)
 ...
 >>> def calculate_age(date, date_of_birth):
@@ -106,6 +106,6 @@ The example above is fairly simplistic. Lets create a slightly more complicated 
 >>> millenium_age('99/04/23')
 'ERROR: 99/04/23 is an invalid date of birth!!!'
 >>> millenium_age('2010-02-17')
-'ERROR: Date of birth is before 2000-01-01!!!'
+'ERROR: Date of birth is after 2000-01-01!!!'
 >>>
 ```

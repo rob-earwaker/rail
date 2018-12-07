@@ -40,7 +40,7 @@ Note that since the match statements are checked in order, only the first match 
 >>>
 ```
 
-If none of the match statements match the input value, a [`rail.UnmatchedValueError`](./rail.UnmatchedValueError.md#railunmatchedvalueerror) will be raised.
+If none of the match statements match the input value, an [`rail.UnmatchedValueError`](./rail.UnmatchedValueError.md#railunmatchedvalueerror) will be raised.
 
 ```python
 >>> fruit = ['banana', 'orange', 'apple']
